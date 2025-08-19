@@ -9,7 +9,12 @@
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "CFBundleLocalizations": [
+          "he"
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -33,10 +38,24 @@
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
-      ]
+      ],
+      "expo-secure-store",
+      "expo-localization"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "supportsRTL": true,
+      "forcesRTL": true,
+      "plugins": [
+        "expo-localization"
+      ],
+      "eas": {
+        "projectId": "9cb1482a-cbc7-45dc-bba1-52f60d64537f"
+      }
+    },
+    "owner": "migolkoanton"
   }
 }
