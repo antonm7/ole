@@ -1,21 +1,16 @@
 // MainPage.tsx
-import React, { useRef, memo, useState } from 'react';
-import {
-  Animated, Image, Platform, SafeAreaView, StyleSheet, Text, View,
-  Modal, Pressable, ScrollView
-} from 'react-native';
+import { InfoModal } from '@/components/Offers/InfoModal';
+import { type Offer, OfferCard } from '@/components/Offers/OfferCard';
 import { LinearGradient } from 'expo-linear-gradient';
-import { OfferCard } from '@/components/Offers/OfferCard';
+import React, { useRef, useState } from 'react';
+import {
+  Animated, Image,
+  Platform,
+  SafeAreaView,
+  StyleSheet, Text, View
+} from 'react-native';
 
 const HEADER_HEIGHT = 200;
-
-type Offer = {
-  title: string;
-  description: string;
-  points: number;
-  expiresAt: string;
-  image:string;
-};
 
 export default function MainPage() {
   const y = useRef(new Animated.Value(0)).current;
@@ -93,8 +88,7 @@ export default function MainPage() {
         {/* Offers */}
         <View style={styles.offers}>
           <Text style={styles.offersTitle}>הצעות מובחרות</Text>
-
-          <MemoOffer
+          <OfferCard
             image='https://shop.htafc.co.il/wp-content/uploads/2025/07/hphwl-thl-byb-mwsry-300x300.jpg'
             title="חולצת בית רשמית 2024"
             description="החולצה החדשה של הפועל תל אביב לעונת 2024. איכות פרימיום עם רקמת הלוגו הרשמי."
@@ -102,7 +96,7 @@ export default function MainPage() {
             points={2500}
             onPress={openOffer}
           />
-          <MemoOffer
+          <OfferCard
             image='https://www.maxsport.co.il/images/itempics/21055_17092023104752_large.jpg'
             title="צעיף רשמי – חורף"
             description="צעיף אדום-לבן איכותי, מחמם וסטייליסטי ליציע."
@@ -110,7 +104,7 @@ export default function MainPage() {
             points={1200}
             onPress={openOffer}
           />
-          <MemoOffer
+          <OfferCard
             image='https://www.htafc.co.il/wp-content/uploads/2024/07/team-logo-hapoel-01.png'
             title="הנחה של 25% על כרטיס משחק"
             description="קוד קופון למשחק בית הקרוב של הפועל."
@@ -118,7 +112,7 @@ export default function MainPage() {
             points={1000}
             onPress={openOffer}
           />
-           <MemoOffer
+           <OfferCard
             image='https://ctraining.co.il/wp-content/uploads/2022/07/Layer-7.jpg'
             title="ייעוץ לפני קניית רכב"
             description="זמן טוב לקנות רכב! קבל פגישת ייעוץ אצל שלמה סיקסט "
@@ -126,7 +120,7 @@ export default function MainPage() {
             points={3750}
             onPress={openOffer}
           />
-           <MemoOffer
+           <OfferCard
             image='https://www.bwise.co.il/storage/uploads/vendors/63888f676fdc0-1669893991.webp'
             title="200 שקל להשקעה ב IBI"
             description="200 שקל שתוכל להשקיע ולהפקיד בבית ההשקעות IBI."
@@ -138,74 +132,14 @@ export default function MainPage() {
       </Animated.ScrollView>
 
       {/* Bottom Modal */}
-      <Modal
-        visible={modalVisible}
-        animationType="slide"
-        transparent={Platform.OS !== 'ios'}         // ❗ iOS must be non-transparent
-        presentationStyle={Platform.OS === 'ios' ? 'pageSheet' : 'overFullScreen'}
-        onRequestClose={closeModal}
-        onDismiss={() => setSelected(null)}          // optional cleanup
-      >
-      {Platform.OS === 'ios' ? (
-        // iOS pageSheet: no need to push from bottom; system handles the sheet
-        <SafeAreaView style={{ flex: 1, paddingTop: 8 }}>
-          {/* tiny visual handle (optional) */}
-          <View style={{ alignItems: 'center', paddingTop: 10, paddingBottom: 6 }}>
-            <View style={{ width: 44, height: 5, borderRadius: 3, backgroundColor: '#E0E0E0' }} />
-          </View>
-
-          <ScrollView contentContainerStyle={{ paddingBottom: 24,paddingHorizontal:40 }} showsVerticalScrollIndicator={false}>
-            <Text style={styles.sheetTitle}>{selected?.title}</Text>
-            <Text style={styles.sheetMeta}>
-              ניקוד נדרש: <Text style={styles.metaStrong}>{selected?.points?.toLocaleString?.() || selected?.points}</Text> ·{' '}
-              בתוקף עד: {selected?.expiresAt}
-            </Text>
-            <View style={{alignItems:'center',height:300,marginTop:24}}>
-              <Image src={selected?.image} style={styles.modalImage} resizeMode="contain" />
-            </View>
-            <Text style={styles.sheetDesc}>{selected?.description}</Text>
-            <View style={styles.ctaRow}>
-              <Pressable style={[styles.btn, styles.btnSecondary]} onPress={closeModal}>
-                <Text style={[styles.btnText, styles.btnTextSecondary]}>סגור</Text>
-              </Pressable>
-              <Pressable style={[styles.btn, styles.btnPrimary]} onPress={() => { /* redeem flow */ }}>
-                <Text style={[styles.btnText, styles.btnTextPrimary]}>ממש נקודות</Text>
-              </Pressable>
-            </View>
-          </ScrollView>
-        </SafeAreaView>
-      ) : (
-          // Android (no native swipe-down on RN Modal): keep your bottom alignment
-          <SafeAreaView style={styles.sheetWrapper}>
-            <View style={styles.sheet}>
-              <ScrollView contentContainerStyle={{ paddingBottom: 24 }} showsVerticalScrollIndicator={false}>
-                <Text style={styles.sheetTitle}>{selected?.title}</Text>
-                <Text style={styles.sheetMeta}>
-                  ניקוד נדרש: <Text style={styles.metaStrong}>{selected?.points?.toLocaleString?.() || selected?.points}</Text> ·{' '}
-                  בתוקף עד: {selected?.expiresAt}
-                </Text>
-                <Text style={styles.sheetDesc}>{selected?.description}</Text>
-
-                <View style={styles.ctaRow}>
-                  <Pressable style={[styles.btn, styles.btnSecondary]} onPress={closeModal}>
-                    <Text style={[styles.btnText, styles.btnTextSecondary]}>סגור</Text>
-                  </Pressable>
-                  <Pressable style={[styles.btn, styles.btnPrimary]} onPress={() => { /* redeem flow */ }}>
-                    <Text style={[styles.btnText, styles.btnTextPrimary]}>ממש נקודות</Text>
-                  </Pressable>
-                </View>
-              </ScrollView>
-            </View>
-          </SafeAreaView>
-          )}
-    </Modal>
+      <InfoModal 
+        modalVisible={modalVisible} 
+        closeModal={closeModal } 
+        onDismiss={closeModal}
+        selected={selected!}        
+      />
     </View>
   );
-}
-
-function MemoOffer(props: Offer & { onPress: (o: Offer) => void }) {
-  const { onPress, ...offer } = props;
-  return <OfferCard {...offer} onPress={() => onPress(offer)} />;
 }
 
 const styles = StyleSheet.create({
@@ -228,7 +162,6 @@ const styles = StyleSheet.create({
   greeting: { fontSize: 20, fontWeight: '700', color: '#fff', textAlign: 'left' },
   subtitle: { fontSize: 14, color: '#fff', textAlign: 'left', marginTop: 4 },
   logo: { width: 82, height: 82, marginLeft: 8 },
-  modalImage:{width:'100%',height:'100%'},
   card: {
     zIndex: 10,
     backgroundColor: '#fff',
@@ -255,44 +188,4 @@ const styles = StyleSheet.create({
   progressBar: { height: 10, borderRadius: 6, backgroundColor: '#eee', overflow: 'hidden', marginBottom: 6 },
   progressFill: { height: '100%', backgroundColor: '#d50000', borderRadius: 6 },
   progressText: { fontSize: 12, textAlign: 'center', color: '#666' },
-
-  // Modal styles
-  backdrop: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  sheetWrapper: {
-    flex: 1,
-    justifyContent: 'flex-end',
-  },
-  sheet: {
-    backgroundColor: '#fff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-    paddingHorizontal: 20,
-    paddingTop: 8,
-    // height:'100%'
-  },
- 
-  sheetTitle: { fontSize: 20, fontWeight: '700', textAlign: 'left', marginTop: 8 },
-  sheetMeta: { fontSize: 14, color: '#666', textAlign: 'left', marginTop: 6 },
-  metaStrong: { color: '#000', fontWeight: '600' },
-  sheetDesc: { fontSize: 16, lineHeight: 22, color: '#333', textAlign: 'left', marginTop: 12 },
-
-  ctaRow: {
-    flexDirection: 'row-reverse',
-    gap: 12,
-    marginTop: 20,
-  },
-  btn: {
-    flex: 1,
-    paddingVertical: 12,
-    borderRadius: 12,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  btnPrimary: { backgroundColor: '#d50000' },
-  btnSecondary: { backgroundColor: '#f1f1f1' },
-  btnText: { fontSize: 16, fontWeight: '600' },
-  btnTextPrimary: { color: '#fff' },
-  btnTextSecondary: { color: '#333' },
 });

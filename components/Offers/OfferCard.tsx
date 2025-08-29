@@ -2,10 +2,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import React from 'react';
 import {
+    Image,
     Pressable,
     StyleSheet,
     Text,
-    Image,
     View
 } from 'react-native';
 
@@ -18,7 +18,7 @@ type OfferCardProps = {
   onPress?: () => void;
 };
 
-export function OfferCard({
+export function OfferCardComponent({
   title,
   description,
   expiresAt,
@@ -66,6 +66,19 @@ export function OfferCard({
     </Pressable>
   );
 }
+
+export function OfferCard(props: Offer & { onPress: (o: Offer) => void }) {
+    const { onPress, ...offer } = props;
+    return <OfferCardComponent {...offer} onPress={() => onPress(offer)} />;
+}
+
+export type Offer = {
+    title: string;
+    description: string;
+    points: number;
+    expiresAt: string;
+    image:string;
+  };
 
 const styles = StyleSheet.create({
   card: {
