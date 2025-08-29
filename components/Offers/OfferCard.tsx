@@ -5,6 +5,7 @@ import {
     Pressable,
     StyleSheet,
     Text,
+    Image,
     View
 } from 'react-native';
 
@@ -13,6 +14,7 @@ type OfferCardProps = {
   description: string;
   expiresAt: string;
   points: number;
+  image:string;
   onPress?: () => void;
 };
 
@@ -21,6 +23,7 @@ export function OfferCard({
   description,
   expiresAt,
   points,
+  image,
   onPress,
 }: OfferCardProps) {
   return (
@@ -33,7 +36,9 @@ export function OfferCard({
     >
       <View style={styles.row}>
         {/* Red image placeholder */}
-        <View style={styles.thumb} />
+        <View style={styles.thumb}>
+          <Image src={image} style={{height:'100%',width:'100%'}}/>
+        </View>
 
         {/* Text content */}
         <View style={styles.content}>
@@ -86,8 +91,6 @@ const styles = StyleSheet.create({
     width: 64,
     height: 64,
     borderRadius: 16,
-    backgroundColor: '#e11d2e',
-    marginStart: 12,
   },
   content: {
     flex: 1,

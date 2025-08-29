@@ -27,10 +27,24 @@ export default function TabLayout() {
         }),
       }}>
       <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'פרופיל',
+          tabBarIcon: ({ color }) => <IconSymbol size={25} name="person.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
+          title: 'בית',
+          tabBarIcon: ({ color }) => <IconSymbol size={30} name="house.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="offers"
+        options={{
+          title: 'הצעות',
+          tabBarIcon: ({ color }) => <IconSymbol size={25} name="gift.fill" color={color} />,
         }}
       />
     </Tabs>

@@ -13,7 +13,7 @@ export default function SignInScreen() {
   const [creditCardNumber, setCreditCardNumber] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const tint = useThemeColor({}, 'tint');
+  const globalButton = useThemeColor({}, 'globalButton');
   const text = useThemeColor({}, 'text');
   const icon = useThemeColor({}, 'icon');
 
@@ -56,7 +56,6 @@ export default function SignInScreen() {
         <CreditCardPreview number={creditCardNumber} />
         <View style={styles.form}>
           <TextInput
-          
             value={creditCardNumber}
             onChangeText={(t) => setCreditCardNumber(formatCard(t))}
             placeholder="1234 5678 9012 3456"
@@ -85,7 +84,7 @@ export default function SignInScreen() {
             onPress={handleSubmit}
             style={({ pressed }) => [
               styles.button,
-              { backgroundColor: tint, opacity: isSubmitting ? 0.6 : pressed ? 0.85 : 1 },
+              { backgroundColor: globalButton, opacity: isSubmitting ? 0.6 : pressed ? 0.85 : 1 },
             ]}
           >
             <ThemedText style={styles.buttonText}>{isSubmitting ? 'נכנס...' : 'התחבר'}</ThemedText>
