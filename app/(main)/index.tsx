@@ -1,12 +1,16 @@
 // MainPage.tsx
-import React from 'react';
-import { Image,View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { OfferCard } from '@/components/Offers/OfferCard';
 import { LinearGradient } from 'expo-linear-gradient';
+import React from 'react';
+import { Image, SafeAreaView, ScrollView, StyleSheet, Text, View } from 'react-native';
 
 export default function MainPage() {
   return (
-    <View style={styles.container}>
+ 
+
+    <ScrollView  style={styles.container}
+    contentContainerStyle={{paddingBottom:100}}
+  >
       {/* Header */}
       <LinearGradient colors={['#d50000', '#b71c1c']} style={styles.header}>
         <SafeAreaView style={styles.innerHeaderContainer}>
@@ -35,30 +39,33 @@ export default function MainPage() {
           <Text style={styles.progressText}>עוד 1,250 נקודות לדרגת זהב</Text>
         </View>
       </View>
-
-      {/* Action Grid */}
-      <View style={styles.grid}>
-        <TouchableOpacity style={[styles.gridItem, { backgroundColor: '#e3f2fd' }]}>
-          <Ionicons name="gift-outline" size={28} color="#1976d2" />
-          <Text style={styles.gridText}>הצעות</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.gridItem, { backgroundColor: '#ffebee' }]}>
-          <MaterialIcons name="store" size={28} color="#d32f2f" />
-          <Text style={styles.gridText}>חנות הפועל</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.gridItem, { backgroundColor: '#f3e5f5' }]}>
-          <Ionicons name="person-outline" size={28} color="#7b1fa2" />
-          <Text style={styles.gridText}>פרופיל</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.gridItem, { backgroundColor: '#e8f5e9' }]}>
-          <Ionicons name="time-outline" size={28} color="#388e3c" />
-          <Text style={styles.gridText}>היסטוריה</Text>
-        </TouchableOpacity>
+      <View style={styles.offers}>
+        <Text style={styles.offersTitle}>הצעות מובחרות</Text>
+        <View>
+        <OfferCard
+          title="חולצת בית רשמית 2024"
+          description="החולצה החדשה של הפועל תל אביב לעונת 2024. איכות פרימיום עם רקמת הלוגו הרשמי."
+          expiresAt="31/12"
+          points={2500}
+          onPress={() => null}
+        />
+        <OfferCard
+          title="חולצת בית רשמית 2024"
+          description="החולצה החדשה של הפועל תל אביב לעונת 2024. איכות פרימיום עם רקמת הלוגו הרשמי."
+          expiresAt="31/12"
+          points={2500}
+          onPress={() => null}
+        />
+         <OfferCard
+          title="חולצת בית רשמית 2024"
+          description="החולצה החדשה של הפועל תל אביב לעונת 2024. איכות פרימיום עם רקמת הלוגו הרשמי."
+          expiresAt="31/12"
+          points={2500}
+          onPress={() => null}
+        />
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
 
@@ -96,6 +103,17 @@ const styles = StyleSheet.create({
   cardTitle: { fontSize: 14, color: '#333' },
   points: { fontSize: 44, fontWeight: 'bold', color: '#d50000', marginVertical: 8 },
   growth: { fontSize: 14, color: '#4caf50' },
+  offers: {
+    paddingHorizontal: 16,
+    paddingVertical: 20,
+  },
+  offersTitle: {
+    fontSize: 16,
+    fontWeight: '500',
+    color: '#333',
+    marginBottom: 12,
+    textAlign: 'left',
+  },
 
   progressContainer: { width: '100%', marginTop: 12 },
   progressBar: {

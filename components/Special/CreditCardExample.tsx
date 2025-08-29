@@ -1,6 +1,6 @@
 import { LinearGradient } from "expo-linear-gradient";
-import { View, Text, Dimensions, I18nManager } from "react-native";
-import Svg, { Rect, Circle, Path } from "react-native-svg";
+import { Dimensions, I18nManager, Text, View } from "react-native";
+import Svg, { Circle, Path, Rect } from "react-native-svg";
 
 function maskCard(num: string) {
   const base = (num || "").padEnd(19, "•");
@@ -87,38 +87,7 @@ export function CreditCardPreview({ number }: { number: string }) {
               >
                 executive
               </Text>
-              <Svg
-                width={cardWidth * 0.04}
-                height={cardWidth * 0.04}
-                // swap margins for RTL
-                style={{
-                  marginRight: RTL ? 2 : 0,
-                  marginLeft: RTL ? 0 : 2,
-                  marginTop: 2,
-                }}
-                viewBox="0 0 16 16"
-              >
-                <Path
-                  d="M3 9l3 3 7-7"
-                  stroke="#EDEEF0"
-                  strokeWidth={1.6}
-                  fill="none"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-              </Svg>
             </View>
-            <Text
-              style={{
-                color: "#B8BBC2",
-                fontSize: cardWidth * 0.03,
-                marginTop: 2,
-                textAlign: RTL ? "right" : "left",
-                writingDirection: RTL ? "rtl" : "ltr",
-              }}
-            >
-              platinum
-            </Text>
           </View>
 
           {/* Contactless (left side in RTL) */}
@@ -132,7 +101,9 @@ export function CreditCardPreview({ number }: { number: string }) {
         {/* Chip */}
         <View
           style={{
-            alignItems: RTL ? "flex-end" : "flex-start",
+            alignItems: 'flex-start',
+            marginBottom:12,
+            marginTop:6
           }}
         >
           <Svg width={cardWidth * 0.16} height={cardHeight * 0.2} viewBox="0 0 56 40" style={{ opacity: 0.9 }}>
