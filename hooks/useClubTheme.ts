@@ -11,7 +11,7 @@ import { useColorScheme } from "react-native";
 
 /** TODO: replace with your real club source (context/profile/async storage) */
 export function useClub(): ClubKey {
-  return "hapoel"; // or "maccabi"
+  return "maccabi-haifa"; // or "maccabi"
 }
 
 type OptionsClub = { scope?: "club"; club?: ClubKey; mode?: ModeKey };

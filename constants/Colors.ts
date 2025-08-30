@@ -1,6 +1,6 @@
 // /constants/Colors.ts
 export type ModeKey = "light" | "dark";
-export type ClubKey = "hapoel" | "maccabi";
+export type ClubKey = "hapoel-tel-aviv" | "maccabi-haifa";
 
 /* ----------------------------- Global (Neutral) ---------------------------- */
 
@@ -59,7 +59,7 @@ export function getGlobalColors(mode: ModeKey = "light"): GlobalTheme {
 const clubBase = globalBase;
 
 export const ClubColors = {
-  hapoel: {
+  'hapoel-tel-aviv': {
     light: {
       ...clubBase.light,
       primary: "#D52F26",
@@ -83,7 +83,7 @@ export const ClubColors = {
       headerGradient: ["#D52F26", "#8C1512"] as const,
     },
   },
-  maccabi: {
+  'maccabi-haifa': {
     light: {
       ...clubBase.light,
       primary: "#00843D",

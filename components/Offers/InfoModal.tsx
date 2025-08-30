@@ -26,7 +26,7 @@ export function InfoModal({modalVisible, closeModal, onDismiss, selected}:{modal
               בתוקף עד: {selected?.expiresAt}
             </Text>
             <View style={{alignItems:'center',height:300,marginTop:24}}>
-              <Image src={selected?.image} style={styles.modalImage} resizeMode="contain" />
+              <Image source={selected?.image} style={styles.modalImage} resizeMode="contain" />
             </View>
             <Text style={styles.sheetDesc}>{selected?.description}</Text>
             <View style={styles.ctaRow}>

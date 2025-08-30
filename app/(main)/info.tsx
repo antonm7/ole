@@ -1,20 +1,20 @@
 // app/.../PointsInfoScreen.tsx
+import { useClubTheme } from "@/hooks/useClubTheme";
 import { LinearGradient } from "expo-linear-gradient";
 import React from "react";
 import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
 import pointsSections from "../../assets/text/points";
 
-const PRIMARY = "#d50000";
-const BG = "#f7f7f9";
-const CARD = "#ffffff";
 
 export default function PointsInfoScreen() {
+    const theme = useClubTheme();
+
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: BG }}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background  }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 120 }}>
         {/* Header */}
         <LinearGradient
-          colors={[PRIMARY, "#b71c1c"]}
+          colors={theme.headerGradient}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
@@ -93,10 +93,11 @@ function SectionCard({
   section: { title: string; body: string[]; icon?: string };
 }) {
   const isRules = section.title.includes("כמות נקודות");
+  const theme = useClubTheme();
   return (
     <View
       style={{
-        backgroundColor: CARD,
+        backgroundColor: theme.secondary,
         borderRadius: 16,
         padding: 16,
         shadowColor: "#000",
@@ -112,7 +113,7 @@ function SectionCard({
           <View
             style={{
               backgroundColor: "#fff1f1",
-              borderColor: PRIMARY,
+              borderColor: theme.primary,
               borderWidth: 1,
               paddingHorizontal: 8,
               paddingVertical: 4,
@@ -128,7 +129,7 @@ function SectionCard({
           style={{
             fontSize: 17,
             fontWeight: "800",
-            color: PRIMARY,
+            color: theme.primary,
             flexShrink: 1,
             textAlign: "left",
           }}
@@ -141,7 +142,7 @@ function SectionCard({
       <View style={{ gap: 6 }}>
         {section.body.map((line, j) => (
           <View key={j} style={{ flexDirection: "row", gap: 6, alignItems: "flex-start" }}>
-            <Text style={{ color: PRIMARY, marginTop: 3 }}>•</Text>
+            <Text style={{ color: theme.primary, marginTop: 3 }}>•</Text>
             <Text
               style={{
                 fontSize: 15,
@@ -166,23 +167,6 @@ function SectionCard({
           borderRadius: 999,
         }}
       />
-    </View>
-  );
-}
-
-function Pill({ text }: { text: string }) {
-  return (
-    <View
-      style={{
-        backgroundColor: "#fff6f6",
-        borderWidth: 1,
-        borderColor: "#ffdad6",
-        paddingHorizontal: 10,
-        paddingVertical: 6,
-        borderRadius: 999,
-      }}
-    >
-      <Text style={{ color: PRIMARY, fontWeight: "700", fontSize: 13,textAlign:'left' }}>{text}</Text>
     </View>
   );
 }

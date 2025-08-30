@@ -18,17 +18,43 @@ import { useClub, useClubTheme } from "@/hooks/useClubTheme";
 
 const HEADER_HEIGHT = 200;
 
+/** ✅ Use static require maps (no template strings) */
 const CLUB_LOGOS: Record<ClubKey, any> = {
-  hapoel: require("../../assets/images/logo.png"),
-  maccabi: require("../../assets/images/maccabi.png"),
+  'hapoel-tel-aviv': require("../../assets/offers/hapoel-tel-aviv/logo.png"),
+  'maccabi-haifa': require("../../assets/offers/maccabi-haifa/logo.png"),
+};
+
+const OFFER_ASSETS: Record<
+  ClubKey,
+  {
+    shirt: any;
+    scarf: any;
+    ticket: any;
+    sponsor1: any;
+    sponsor2: any;
+  }
+> = {
+  'hapoel-tel-aviv': {
+    shirt: require("../../assets/offers/hapoel-tel-aviv/shirt.jpg"),
+    scarf: require("../../assets/offers/hapoel-tel-aviv/scarf.jpg"),
+    ticket: require("../../assets/offers/hapoel-tel-aviv/logo.png"),
+    sponsor1: require("../../assets/offers/hapoel-tel-aviv/sponser1.jpg"),
+    sponsor2: require("../../assets/offers/hapoel-tel-aviv/sponser2.webp"),
+  },
+  'maccabi-haifa': {
+    shirt: require("../../assets/offers/maccabi-haifa/shirt.jpg"),
+    scarf: require("../../assets/offers/maccabi-haifa/scarf.png"),
+    ticket: require("../../assets/offers/maccabi-haifa/logo.png"),
+    sponsor1: require("../../assets/offers/maccabi-haifa/sponser1.png"),
+    sponsor2: require("../../assets/offers/maccabi-haifa/sponser2.png"),
+  },
 };
 
 export default function MainPage() {
-  // Theme for the active club (hook handles mode automatically)
-  const theme = useClubTheme(); // { primary, headerGradient, onPrimary, text, background, ... }
-
-  // TODO: wire this to your real user/context (same value used by useClubTheme’s internal useClub)
-  const currentClub: ClubKey = useClub(); // or "maccabi"
+  // Theme for the active club (hook handles light/dark automatically)
+  const theme = useClubTheme();
+  // Current club from your hook (exported from useClubTheme module)
+  const currentClub: ClubKey = useClub();
 
   const y = useRef(new Animated.Value(0)).current;
   const [modalVisible, setModalVisible] = useState(false);
@@ -52,6 +78,9 @@ export default function MainPage() {
   };
   const closeModal = () => setModalVisible(false);
 
+  const isLightBg = theme.background === "#FFFFFF";
+  const assets = OFFER_ASSETS[currentClub];
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Hideable header */}
@@ -67,7 +96,7 @@ export default function MainPage() {
           <View>
             <Text style={[styles.greeting, { color: theme.onPrimary }]}>שלום אנטון</Text>
             <Text style={[styles.subtitle, { color: theme.onPrimary }]}>
-              {currentClub === "hapoel" ? "אוהד הפועל תל אביב" : "אוהד מכבי חיפה"}
+              {currentClub === "hapoel-tel-aviv" ? "אוהד הפועל תל אביב" : "אוהד מכבי חיפה"}
             </Text>
           </View>
           <Image source={CLUB_LOGOS[currentClub]} style={styles.logo} resizeMode="contain" />
@@ -98,8 +127,8 @@ export default function MainPage() {
           style={[
             styles.card,
             {
-              backgroundColor: theme.background === "#FFFFFF" ? "#fff" : "#1d1f22",
-              shadowOpacity: theme.background === "#FFFFFF" ? 0.15 : 0.25,
+              backgroundColor: isLightBg ? "#fff" : "#1d1f22",
+              shadowOpacity: isLightBg ? 0.15 : 0.25,
             },
           ]}
         >
@@ -111,7 +140,7 @@ export default function MainPage() {
             <View
               style={[
                 styles.progressBar,
-                { backgroundColor: theme.background === "#FFFFFF" ? "#eee" : "#2a2d31" },
+                { backgroundColor: isLightBg ? "#eee" : "#2a2d31" },
               ]}
             >
               <View
@@ -124,7 +153,7 @@ export default function MainPage() {
             <Text
               style={[
                 styles.progressText,
-                { color: theme.background === "#FFFFFF" ? "#666" : "#B7BCC1" },
+                { color: isLightBg ? "#666" : "#B7BCC1" },
               ]}
             >
               עוד 1,250 נקודות לדרגת זהב
@@ -137,48 +166,68 @@ export default function MainPage() {
           <Text
             style={[
               styles.offersTitle,
-              { color: theme.text,borderColor:theme.primary},
+              { color: theme.text, borderRightColor: theme.primary },
             ]}
           >
             הצעות מובחרות
           </Text>
 
           <OfferCard
-            image="https://shop.htafc.co.il/wp-content/uploads/2025/07/hphwl-thl-byb-mwsry-300x300.jpg"
+            image={assets.shirt}
             title="חולצת בית רשמית 2024"
-            description="החולצה החדשה של הפועל תל אביב לעונת 2024. איכות פרימיום עם רקמת הלוגו הרשמי."
+            description={
+              currentClub === "hapoel-tel-aviv"
+                ? "החולצה החדשה של הפועל תל אביב לעונת 2024. איכות פרימיום עם רקמת הלוגו הרשמי."
+                : "החולצה החדשה של מכבי חיפה לעונת 2024. איכות פרימיום עם רקמת הלוגו הרשמי."
+            }
             expiresAt="31/12"
             points={2500}
             onPress={openOffer}
           />
           <OfferCard
-            image="https://www.maxsport.co.il/images/itempics/21055_17092023104752_large.jpg"
+            image={assets.scarf}
             title="צעיף רשמי – חורף"
-            description="צעיף אדום-לבן איכותי, מחמם וסטייליסטי ליציע."
+            description={
+              currentClub === "hapoel-tel-aviv"
+                ? "צעיף אדום-לבן איכותי, מחמם וסטייליסטי ליציע."
+                : "צעיף ירוק-לבן איכותי, מחמם וסטייליסטי ליציע."
+            }
             expiresAt="15/01"
             points={1200}
             onPress={openOffer}
           />
           <OfferCard
-            image="https://www.htafc.co.il/wp-content/uploads/2024/07/team-logo-hapoel-01.png"
+            image={assets.ticket}
             title="הנחה של 25% על כרטיס משחק"
-            description="קוד קופון למשחק בית הקרוב של הפועל."
+            description={
+              currentClub === "hapoel-tel-aviv"
+                ? "קוד קופון למשחק בית הקרוב של הפועל."
+                : "קוד קופון למשחק בית הקרוב של מכבי."
+            }
             expiresAt="30/11"
             points={1000}
             onPress={openOffer}
           />
           <OfferCard
-            image="https://ctraining.co.il/wp-content/uploads/2022/07/Layer-7.jpg"
+            image={assets.sponsor1}
             title="ייעוץ לפני קניית רכב"
-            description="זמן טוב לקנות רכב! קבל פגישת ייעוץ אצל שלמה סיקסט "
+            description={
+              currentClub === "hapoel-tel-aviv"
+                ? "זמן טוב לקנות רכב! קבל פגישת ייעוץ אצל שלמה סיקסט"
+                : "הנחה של 10% בחנות של אדידס"
+            }
             expiresAt="30/11"
             points={3750}
             onPress={openOffer}
           />
           <OfferCard
-            image="https://www.bwise.co.il/storage/uploads/vendors/63888f676fdc0-1669893991.webp"
+            image={assets.sponsor2}
             title="200 שקל להשקעה ב IBI"
-            description="200 שקל שתוכל להשקיע ולהפקיד בבית ההשקעות IBI."
+            description={
+              currentClub === "hapoel-tel-aviv"
+                ? "200 שקל שתוכל להשקיע ולהפקיד בבית ההשקעות IBI."
+                : "הנחה של 18% לסרט ביס פלאנט"
+            }
             expiresAt="30/11"
             points={900}
             onPress={openOffer}
@@ -248,7 +297,7 @@ const styles = StyleSheet.create({
     marginBottom: 12,
     textAlign: "left",
     borderRightWidth: 4,
-    paddingHorizontal:12
+    paddingHorizontal: 12,
   },
 
   progressContainer: { width: "100%", marginTop: 12 },
