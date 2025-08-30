@@ -61,7 +61,7 @@ export interface PointsSection {
       title: "תמיכה",
       body: [
         "צריך עזרה? פנו דרך 'מרכז התמיכה' באפליקציה או לשירות הלקוחות של המועדון.",
-        "יאללה, צוברים ומנצחים! ❤️🖤"
+        "יאללה, צוברים ומנצחים! 💚🤍"
       ]
     }
   ];
