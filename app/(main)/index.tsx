@@ -1,56 +1,76 @@
 // MainPage.tsx
-import { InfoModal } from '@/components/Offers/InfoModal';
-import { type Offer, OfferCard } from '@/components/Offers/OfferCard';
-import { LinearGradient } from 'expo-linear-gradient';
-import React, { useRef, useState } from 'react';
+import { InfoModal } from "@/components/Offers/InfoModal";
+import { OfferCard, type Offer } from "@/components/Offers/OfferCard";
+import { LinearGradient } from "expo-linear-gradient";
+import React, { useRef, useState } from "react";
 import {
-  Animated, Image,
+  Animated,
+  Image,
   Platform,
   SafeAreaView,
-  StyleSheet, Text, View
-} from 'react-native';
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
+
+import { type ClubKey } from "@/constants/Colors";
+import { useClub, useClubTheme } from "@/hooks/useClubTheme";
 
 const HEADER_HEIGHT = 200;
 
+const CLUB_LOGOS: Record<ClubKey, any> = {
+  hapoel: require("../../assets/images/logo.png"),
+  maccabi: require("../../assets/images/maccabi.png"),
+};
+
 export default function MainPage() {
+  // Theme for the active club (hook handles mode automatically)
+  const theme = useClubTheme(); // { primary, headerGradient, onPrimary, text, background, ... }
+
+  // TODO: wire this to your real user/context (same value used by useClubTheme’s internal useClub)
+  const currentClub: ClubKey = useClub(); // or "maccabi"
+
   const y = useRef(new Animated.Value(0)).current;
   const [modalVisible, setModalVisible] = useState(false);
   const [selected, setSelected] = useState<Offer | null>(null);
 
-  // header hides fully as you scroll
   const headerTranslateY = y.interpolate({
     inputRange: [0, HEADER_HEIGHT],
     outputRange: [0, -HEADER_HEIGHT],
-    extrapolate: 'clamp',
+    extrapolate: "clamp",
   });
 
   const headerOpacity = y.interpolate({
     inputRange: [0, HEADER_HEIGHT * 0.8],
     outputRange: [1, 0],
-    extrapolate: 'clamp',
+    extrapolate: "clamp",
   });
 
   const openOffer = (offer: Offer) => {
     setSelected(offer);
     setModalVisible(true);
   };
-
   const closeModal = () => setModalVisible(false);
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Hideable header */}
       <Animated.View
         pointerEvents="none"
-        style={[styles.header, { transform: [{ translateY: headerTranslateY }], opacity: headerOpacity }]}
+        style={[
+          styles.header,
+          { transform: [{ translateY: headerTranslateY }], opacity: headerOpacity },
+        ]}
       >
-        <LinearGradient colors={['#d50000', '#b71c1c']} style={StyleSheet.absoluteFill} />
+        <LinearGradient colors={theme.headerGradient} style={StyleSheet.absoluteFill} />
         <SafeAreaView style={styles.innerHeaderContainer}>
           <View>
-            <Text style={styles.greeting}>שלום אנטון</Text>
-            <Text style={styles.subtitle}>אוהד הפועל תל אביב</Text>
+            <Text style={[styles.greeting, { color: theme.onPrimary }]}>שלום אנטון</Text>
+            <Text style={[styles.subtitle, { color: theme.onPrimary }]}>
+              {currentClub === "hapoel" ? "אוהד הפועל תל אביב" : "אוהד מכבי חיפה"}
+            </Text>
           </View>
-          <Image source={require('../../assets/images/logo.png')} style={styles.logo} resizeMode="contain" />
+          <Image source={CLUB_LOGOS[currentClub]} style={styles.logo} resizeMode="contain" />
         </SafeAreaView>
       </Animated.View>
 
@@ -60,10 +80,12 @@ export default function MainPage() {
         contentInsetAdjustmentBehavior="never"
         automaticallyAdjustContentInsets={false}
         automaticallyAdjustsScrollIndicatorInsets={false}
-        contentOffset={{ x: 0, y: Platform.OS === 'ios' ? 0.5 : 0 }}
+        contentOffset={{ x: 0, y: Platform.OS === "ios" ? 0.5 : 0 }}
         scrollEventThrottle={16}
-        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y } } }], { useNativeDriver: true })}
-        decelerationRate={Platform.OS === 'ios' ? 'normal' : 0.98}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y } } }], {
+          useNativeDriver: true,
+        })}
+        decelerationRate={Platform.OS === "ios" ? "normal" : 0.98}
         removeClippedSubviews
         showsVerticalScrollIndicator={false}
         keyboardShouldPersistTaps="handled"
@@ -72,25 +94,57 @@ export default function MainPage() {
         <View style={{ height: HEADER_HEIGHT }} />
 
         {/* Points card */}
-        <View style={styles.card}>
-          
-          <Text style={styles.cardTitle}>⭐ נקודות דיגיטליות</Text>
-          <Text style={styles.points}>5,778</Text>
-          <Text style={styles.growth}>+250 השבוע</Text>
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: theme.background === "#FFFFFF" ? "#fff" : "#1d1f22",
+              shadowOpacity: theme.background === "#FFFFFF" ? 0.15 : 0.25,
+            },
+          ]}
+        >
+          <Text style={[styles.cardTitle, { color: theme.text }]}>⭐ נקודות דיגיטליות</Text>
+          <Text style={[styles.points, { color: theme.primary }]}>5,778</Text>
+          <Text style={[styles.growth, { color: "#12B886" }]}>+250 השבוע</Text>
 
           <View style={styles.progressContainer}>
-            <View style={styles.progressBar}>
-              <View style={[styles.progressFill, { width: '75%' }]} />
+            <View
+              style={[
+                styles.progressBar,
+                { backgroundColor: theme.background === "#FFFFFF" ? "#eee" : "#2a2d31" },
+              ]}
+            >
+              <View
+                style={[
+                  styles.progressFill,
+                  { width: "75%", backgroundColor: theme.primary },
+                ]}
+              />
             </View>
-            <Text style={styles.progressText}>עוד 1,250 נקודות לדרגת זהב</Text>
+            <Text
+              style={[
+                styles.progressText,
+                { color: theme.background === "#FFFFFF" ? "#666" : "#B7BCC1" },
+              ]}
+            >
+              עוד 1,250 נקודות לדרגת זהב
+            </Text>
           </View>
         </View>
 
         {/* Offers */}
         <View style={styles.offers}>
-          <Text style={styles.offersTitle}>הצעות מובחרות</Text>
+          <Text
+            style={[
+              styles.offersTitle,
+              { color: theme.text,borderColor:theme.primary},
+            ]}
+          >
+            הצעות מובחרות
+          </Text>
+
           <OfferCard
-            image='https://shop.htafc.co.il/wp-content/uploads/2025/07/hphwl-thl-byb-mwsry-300x300.jpg'
+            image="https://shop.htafc.co.il/wp-content/uploads/2025/07/hphwl-thl-byb-mwsry-300x300.jpg"
             title="חולצת בית רשמית 2024"
             description="החולצה החדשה של הפועל תל אביב לעונת 2024. איכות פרימיום עם רקמת הלוגו הרשמי."
             expiresAt="31/12"
@@ -98,7 +152,7 @@ export default function MainPage() {
             onPress={openOffer}
           />
           <OfferCard
-            image='https://www.maxsport.co.il/images/itempics/21055_17092023104752_large.jpg'
+            image="https://www.maxsport.co.il/images/itempics/21055_17092023104752_large.jpg"
             title="צעיף רשמי – חורף"
             description="צעיף אדום-לבן איכותי, מחמם וסטייליסטי ליציע."
             expiresAt="15/01"
@@ -106,23 +160,23 @@ export default function MainPage() {
             onPress={openOffer}
           />
           <OfferCard
-            image='https://www.htafc.co.il/wp-content/uploads/2024/07/team-logo-hapoel-01.png'
+            image="https://www.htafc.co.il/wp-content/uploads/2024/07/team-logo-hapoel-01.png"
             title="הנחה של 25% על כרטיס משחק"
             description="קוד קופון למשחק בית הקרוב של הפועל."
             expiresAt="30/11"
             points={1000}
             onPress={openOffer}
           />
-           <OfferCard
-            image='https://ctraining.co.il/wp-content/uploads/2022/07/Layer-7.jpg'
+          <OfferCard
+            image="https://ctraining.co.il/wp-content/uploads/2022/07/Layer-7.jpg"
             title="ייעוץ לפני קניית רכב"
             description="זמן טוב לקנות רכב! קבל פגישת ייעוץ אצל שלמה סיקסט "
             expiresAt="30/11"
             points={3750}
             onPress={openOffer}
           />
-           <OfferCard
-            image='https://www.bwise.co.il/storage/uploads/vendors/63888f676fdc0-1669893991.webp'
+          <OfferCard
+            image="https://www.bwise.co.il/storage/uploads/vendors/63888f676fdc0-1669893991.webp"
             title="200 שקל להשקעה ב IBI"
             description="200 שקל שתוכל להשקיע ולהפקיד בבית ההשקעות IBI."
             expiresAt="30/11"
@@ -133,60 +187,72 @@ export default function MainPage() {
       </Animated.ScrollView>
 
       {/* Bottom Modal */}
-      <InfoModal 
-        modalVisible={modalVisible} 
-        closeModal={closeModal } 
+      <InfoModal
+        modalVisible={modalVisible}
+        closeModal={closeModal}
         onDismiss={closeModal}
-        selected={selected!}        
+        selected={selected!}
       />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#fafafa' },
+  container: { flex: 1 },
 
   header: {
-    position: 'absolute',
-    top: 0, left: 0, right: 0,
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
     height: HEADER_HEIGHT,
     paddingHorizontal: 16,
     paddingBottom: 40,
     zIndex: 1,
-    overflow: 'hidden',
+    overflow: "hidden",
   },
   scroller: { flex: 1, zIndex: 5 },
 
   innerHeaderContainer: {
-    flex: 1, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingTop: 0,
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingTop: 0,
   },
-  greeting: { fontSize: 20, fontWeight: '700', color: '#fff', textAlign: 'left' },
-  subtitle: { fontSize: 14, color: '#fff', textAlign: 'left', marginTop: 4 },
+  greeting: { fontSize: 20, fontWeight: "700", textAlign: "left" },
+  subtitle: { fontSize: 14, textAlign: "left", marginTop: 4 },
   logo: { width: 82, height: 82, marginLeft: 8 },
+
   card: {
     zIndex: 10,
-    backgroundColor: '#fff',
     marginHorizontal: 16,
     borderRadius: 16,
     padding: 20,
-    alignItems: 'center',
+    alignItems: "center",
     elevation: 6,
-    shadowColor: '#000',
-    shadowOpacity: 0.15,
+    shadowColor: "#000",
     shadowRadius: 6,
     shadowOffset: { width: 0, height: 3 },
     marginTop: -40,
   },
 
-  cardTitle: { fontSize: 14, color: '#333' },
-  points: { fontSize: 44, fontWeight: 'bold', color: '#d50000', marginVertical: 8 },
-  growth: { fontSize: 14, color: '#4caf50' },
+  cardTitle: { fontSize: 14 },
+  points: { fontSize: 44, fontWeight: "bold", marginVertical: 8 },
+  growth: { fontSize: 14 },
 
   offers: { paddingHorizontal: 16, paddingVertical: 20 },
-  offersTitle: { fontSize: 16, fontWeight: '500', color: '#333', marginBottom: 12, textAlign: 'left' },
+  offersTitle: {
+    fontSize: 16,
+    fontWeight: "600",
+    marginBottom: 12,
+    textAlign: "left",
+    borderRightWidth: 4,
+    paddingHorizontal:12
+  },
 
-  progressContainer: { width: '100%', marginTop: 12 },
-  progressBar: { height: 10, borderRadius: 6, backgroundColor: '#eee', overflow: 'hidden', marginBottom: 6 },
-  progressFill: { height: '100%', backgroundColor: '#d50000', borderRadius: 6 },
-  progressText: { fontSize: 12, textAlign: 'center', color: '#666' },
-    });
+  progressContainer: { width: "100%", marginTop: 12 },
+  progressBar: { height: 10, borderRadius: 6, overflow: "hidden", marginBottom: 6 },
+  progressFill: { height: "100%", borderRadius: 6 },
+  progressText: { fontSize: 12, textAlign: "center" },
+});

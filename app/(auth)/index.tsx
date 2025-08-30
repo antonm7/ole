@@ -1,21 +1,30 @@
 // app/(auth)/signin.tsx
-import React, { useEffect, useState } from 'react';
-import { KeyboardAvoidingView, Platform, Pressable, StyleSheet, TextInput, View, Alert, I18nManager } from 'react-native';
 import { router } from 'expo-router';
+import React, { useEffect, useState } from 'react';
+import {
+  Alert,
+  I18nManager,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  StyleSheet,
+  Text,
+  TextInput,
+  View
+} from 'react-native';
 
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
-import { useThemeColor } from '@/hooks/useThemeColor';
 import { CreditCardPreview } from '@/components/Special/CreditCardExample';
 
+// ✅ single theme hook for everything (global / club)
+import { useClubTheme } from '@/hooks/useClubTheme';
+
 export default function SignInScreen() {
+  // Neutral (non-club) palette
+  const g = useClubTheme({ scope: 'global' });
+
   const [phoneNumber, setPhoneNumber] = useState('');
   const [creditCardNumber, setCreditCardNumber] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const globalButton = useThemeColor({}, 'globalButton');
-  const text = useThemeColor({}, 'text');
-  const icon = useThemeColor({}, 'icon');
 
   async function handleSubmit() {
     if (!phoneNumber || !creditCardNumber) {
@@ -24,11 +33,7 @@ export default function SignInScreen() {
     }
     try {
       setIsSubmitting(true);
-
-      // TODO: call your backend, verify, then persist a token (SecureStore)
-      // await SecureStore.setItemAsync('token', jwt)
-
-      router.replace('/(main)'); 
+      router.replace('/(main)');
     } catch {
       Alert.alert('Sign-in failed', 'Please try again.');
     } finally {
@@ -44,39 +49,63 @@ export default function SignInScreen() {
   useEffect(() => {
     I18nManager.allowRTL(true);
     I18nManager.forceRTL(true);
-  },[])
+  }, []);
 
   return (
-    <KeyboardAvoidingView behavior={Platform.select({ ios: 'padding', android: undefined })} style={{ flex: 1 }}>
-      <ThemedView style={styles.container}>
-        <View style={styles.header} >
-          <ThemedText type="title" style={styles.loginText}>התחבר</ThemedText>
-          <ThemedText style={styles.loginText}>הזן את פרטי האשראי שלך ואת מספר הטלפון</ThemedText>
+    <KeyboardAvoidingView
+      behavior={Platform.select({ ios: 'padding', android: undefined })}
+      style={{ flex: 1, backgroundColor: g.background }}
+    >
+      <View style={[styles.container, { backgroundColor: g.background }]}>
+        <View style={styles.header}>
+          <Text style={[styles.loginText, { color: g.text }]}>
+            התחבר
+          </Text>
+          <Text style={[styles.loginText, { color: g.icon }]}>
+            הזן את פרטי האשראי שלך ואת מספר הטלפון
+          </Text>
         </View>
+
         <CreditCardPreview number={creditCardNumber} />
+
         <View style={styles.form}>
           <TextInput
             value={creditCardNumber}
             onChangeText={(t) => setCreditCardNumber(formatCard(t))}
             placeholder="1234 5678 9012 3456"
-            placeholderTextColor={icon}
+            placeholderTextColor={g.icon}
             autoCapitalize="none"
             autoCorrect={false}
             keyboardType={Platform.select({ ios: 'number-pad', android: 'numeric' }) as any}
             textContentType="creditCardNumber"
             maxLength={19}
-            style={[styles.input, { borderColor: icon, color: text }]}
+            style={[
+              styles.input,
+              {
+                borderColor: g.icon,
+                color: g.text,
+                backgroundColor: Platform.OS === 'ios' ? '#ffffff' : undefined,
+              },
+            ]}
           />
+
           <TextInput
             value={phoneNumber}
             onChangeText={setPhoneNumber}
             placeholder="מספר טלפון"
-            placeholderTextColor={icon}
+            placeholderTextColor={g.icon}
             autoCapitalize="none"
             autoCorrect={false}
             keyboardType="phone-pad"
             textContentType="telephoneNumber"
-            style={[styles.input, { borderColor: icon, color: text }]}
+            style={[
+              styles.input,
+              {
+                borderColor: g.icon,
+                color: g.text,
+                backgroundColor: Platform.OS === 'ios' ? '#ffffff' : undefined,
+              },
+            ]}
           />
 
           <Pressable
@@ -84,26 +113,29 @@ export default function SignInScreen() {
             onPress={handleSubmit}
             style={({ pressed }) => [
               styles.button,
-              { backgroundColor: globalButton, opacity: isSubmitting ? 0.6 : pressed ? 0.85 : 1 },
+              {
+                backgroundColor: g.globalButton ?? g.primary,
+                opacity: isSubmitting ? 0.6 : pressed ? 0.85 : 1,
+              },
             ]}
           >
-            <ThemedText style={styles.buttonText}>{isSubmitting ? 'נכנס...' : 'התחבר'}</ThemedText>
+            <Text style={[styles.buttonText, { color: g.onPrimary }]}>
+              {isSubmitting ? 'נכנס...' : 'התחבר'}
+            </Text>
           </Pressable>
         </View>
-      </ThemedView>
+      </View>
     </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, justifyContent: 'center', gap: 28 },
-  header: { gap: 6},
+  header: { gap: 6 },
   form: { gap: 14 },
-  loginText: {
-    textAlign:'left'
-  },
+  loginText: { textAlign: 'left' },
   input: {
-    textAlign:'right',
+    textAlign: 'right',
     borderWidth: 1,
     borderRadius: 14,
     paddingHorizontal: 16,
@@ -111,5 +143,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   button: { borderRadius: 14, paddingVertical: 16, alignItems: 'center' },
-  buttonText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  buttonText: { fontSize: 16, fontWeight: '600' },
 });
