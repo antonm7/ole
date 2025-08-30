@@ -61,7 +61,7 @@ export default function SignInScreen() {
           <Text style={[styles.loginText, { color: g.text }]}>
             התחבר
           </Text>
-          <Text style={[styles.loginText, { color: g.icon }]}>
+          <Text style={[styles.loginText, { color: g.icon,fontSize:16 }]}>
             הזן את פרטי האשראי שלך ואת מספר הטלפון
           </Text>
         </View>
@@ -133,7 +133,7 @@ const styles = StyleSheet.create({
   container: { flex: 1, padding: 24, justifyContent: 'center', gap: 28 },
   header: { gap: 6 },
   form: { gap: 14 },
-  loginText: { textAlign: 'left' },
+  loginText: { textAlign: 'left',fontSize:22 },
   input: {
     textAlign: 'right',
     borderWidth: 1,

@@ -24,7 +24,7 @@ export const GlobalColors = {
     ...globalBase.light,
     primary: "#0F62FE",
     onPrimary: "#FFFFFF",
-    globalButton: "#0F62FE",
+    globalButton: "#0A0A0A",
     tint: "#0F62FE",
     tabIconSelected: "#0F62FE",
   },
