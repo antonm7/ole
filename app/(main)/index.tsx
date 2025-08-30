@@ -73,6 +73,7 @@ export default function MainPage() {
 
         {/* Points card */}
         <View style={styles.card}>
+          
           <Text style={styles.cardTitle}>⭐ נקודות דיגיטליות</Text>
           <Text style={styles.points}>5,778</Text>
           <Text style={styles.growth}>+250 השבוע</Text>
@@ -188,4 +189,4 @@ const styles = StyleSheet.create({
   progressBar: { height: 10, borderRadius: 6, backgroundColor: '#eee', overflow: 'hidden', marginBottom: 6 },
   progressFill: { height: '100%', backgroundColor: '#d50000', borderRadius: 6 },
   progressText: { fontSize: 12, textAlign: 'center', color: '#666' },
-});
+    });
