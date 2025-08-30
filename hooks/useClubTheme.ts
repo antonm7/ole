@@ -8,10 +8,25 @@ import {
     type ModeKey,
 } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
+import { create } from "zustand";
 
-/** TODO: replace with your real club source (context/profile/async storage) */
+
+type ClubStore = {
+    club: ClubKey;
+    setClub: (club: ClubKey) => void;
+};
+
+export const useClubStore = create<ClubStore>((set) => ({
+    club: "hapoel-tel-aviv", // default club
+    setClub: (club) => set({ club }),
+}));
+
+export function useSetClub(): (club: ClubKey) => void {
+    return useClubStore((s) => s.setClub);
+}
+
 export function useClub(): ClubKey {
-  return "maccabi-haifa"; // or "maccabi"
+  return useClubStore(s => s.club);
 }
 
 type OptionsClub = { scope?: "club"; club?: ClubKey; mode?: ModeKey };

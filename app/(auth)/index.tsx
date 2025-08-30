@@ -13,15 +13,16 @@ import {
   View
 } from 'react-native';
 
+
 import { CreditCardPreview } from '@/components/Special/CreditCardExample';
 
 // ✅ single theme hook for everything (global / club)
-import { useClubTheme } from '@/hooks/useClubTheme';
+import { useClubTheme, useSetClub } from '@/hooks/useClubTheme';
 
 export default function SignInScreen() {
   // Neutral (non-club) palette
   const g = useClubTheme({ scope: 'global' });
-
+  const setClub = useSetClub();
   const [phoneNumber, setPhoneNumber] = useState('');
   const [creditCardNumber, setCreditCardNumber] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,6 +34,12 @@ export default function SignInScreen() {
     }
     try {
       setIsSubmitting(true);
+      console.log(creditCardNumber);
+      if(creditCardNumber === '1111 1111 1111 1111') {
+        setClub('maccabi-haifa');
+      } else {
+        setClub('hapoel-tel-aviv');
+      };
       router.replace('/(main)');
     } catch {
       Alert.alert('Sign-in failed', 'Please try again.');
