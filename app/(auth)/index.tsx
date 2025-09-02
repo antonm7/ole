@@ -34,7 +34,6 @@ export default function SignInScreen() {
     }
     try {
       setIsSubmitting(true);
-      console.log(creditCardNumber);
       if(creditCardNumber === '1111 1111 1111 1111') {
         setClub('maccabi-haifa');
       } else {
