@@ -8,13 +8,21 @@
     "scheme": "olle",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "updates": {
+      "enabled": true,
+      "fallbackToCacheTimeout": 0
+    },
     "ios": {
       "supportsTablet": true,
       "infoPlist": {
         "CFBundleLocalizations": [
+          "he",
           "he"
-        ]
-      }
+        ],
+        "ExpoLocalization_supportsRTL": true,
+        "ExpoLocalization_forcesRTL": true
+      },
+      "bundleIdentifier": "com.migolkoanton.olle"
     },
     "android": {
       "adaptiveIcon": {
