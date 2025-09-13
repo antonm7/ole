@@ -2,7 +2,7 @@
 import { InfoModal } from "@/components/Offers/InfoModal";
 import { OfferCard, type Offer } from "@/components/Offers/OfferCard";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useRef, useState } from "react";
+import { useRef, useState } from "react";
 import {
   Animated,
   Image,
@@ -10,9 +10,11 @@ import {
   SafeAreaView,
   StyleSheet,
   Text,
+  TouchableOpacity,
   View,
 } from "react-native";
 
+import { LevelsModal } from "@/components/Levels/LevelsModal";
 import { type ClubKey } from "@/constants/Colors";
 import { useClub, useClubTheme } from "@/hooks/useClubTheme";
 
@@ -60,6 +62,8 @@ export default function MainPage() {
   const [modalVisible, setModalVisible] = useState(false);
   const [selected, setSelected] = useState<Offer | null>(null);
 
+  const [levelsModalVisibility, setLevelsVisible] = useState(false);
+
   const headerTranslateY = y.interpolate({
     inputRange: [0, HEADER_HEIGHT],
     outputRange: [0, -HEADER_HEIGHT],
@@ -77,6 +81,7 @@ export default function MainPage() {
     setModalVisible(true);
   };
   const closeModal = () => setModalVisible(false);
+  
 
   const isLightBg = theme.background === "#FFFFFF";
   const assets = OFFER_ASSETS[currentClub];
@@ -123,7 +128,8 @@ export default function MainPage() {
         <View style={{ height: HEADER_HEIGHT }} />
 
         {/* Points card */}
-        <View
+        <TouchableOpacity
+          onPress={() => setLevelsVisible(true)}
           style={[
             styles.card,
             {
@@ -159,7 +165,7 @@ export default function MainPage() {
               עוד 1,250 נקודות לדרגת זהב
             </Text>
           </View>
-        </View>
+        </TouchableOpacity>
 
         {/* Offers */}
         <View style={styles.offers}>
@@ -241,6 +247,12 @@ export default function MainPage() {
         closeModal={closeModal}
         onDismiss={closeModal}
         selected={selected!}
+      />
+      <LevelsModal
+        visible={levelsModalVisibility}
+        onClose={() => setLevelsVisible(false)}
+        onDismiss={() => {}}
+        userPoints={5400}
       />
     </View>
   );
