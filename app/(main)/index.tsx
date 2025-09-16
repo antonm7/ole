@@ -1,6 +1,6 @@
-// MainPage.tsx
 import { InfoModal } from "@/components/Offers/InfoModal";
 import { OfferCard, type Offer } from "@/components/Offers/OfferCard";
+import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
 import { useRef, useState } from "react";
 import {
@@ -17,13 +17,14 @@ import {
 import { LevelsModal } from "@/components/Levels/LevelsModal";
 import { type ClubKey } from "@/constants/Colors";
 import { useClub, useClubTheme } from "@/hooks/useClubTheme";
+import { getProgress } from "@/lib/tiers"; // 👈 shared logic
 
 const HEADER_HEIGHT = 200;
 
-/** ✅ Use static require maps (no template strings) */
+/** ✅ Static require maps */
 const CLUB_LOGOS: Record<ClubKey, any> = {
-  'hapoel-tel-aviv': require("../../assets/offers/hapoel-tel-aviv/logo.png"),
-  'maccabi-haifa': require("../../assets/offers/maccabi-haifa/logo.png"),
+  "hapoel-tel-aviv": require("../../assets/offers/hapoel-tel-aviv/logo.png"),
+  "maccabi-haifa": require("../../assets/offers/maccabi-haifa/logo.png"),
 };
 
 const OFFER_ASSETS: Record<
@@ -36,14 +37,14 @@ const OFFER_ASSETS: Record<
     sponsor2: any;
   }
 > = {
-  'hapoel-tel-aviv': {
+  "hapoel-tel-aviv": {
     shirt: require("../../assets/offers/hapoel-tel-aviv/shirt.jpg"),
     scarf: require("../../assets/offers/hapoel-tel-aviv/scarf.jpg"),
     ticket: require("../../assets/offers/hapoel-tel-aviv/logo.png"),
     sponsor1: require("../../assets/offers/hapoel-tel-aviv/sponser1.jpg"),
     sponsor2: require("../../assets/offers/hapoel-tel-aviv/sponser2.webp"),
   },
-  'maccabi-haifa': {
+  "maccabi-haifa": {
     shirt: require("../../assets/offers/maccabi-haifa/shirt.jpg"),
     scarf: require("../../assets/offers/maccabi-haifa/scarf.png"),
     ticket: require("../../assets/offers/maccabi-haifa/logo.png"),
@@ -52,17 +53,17 @@ const OFFER_ASSETS: Record<
   },
 };
 
-export default function MainPage() {
-  // Theme for the active club (hook handles light/dark automatically)
+export default function HomePage() {
   const theme = useClubTheme();
-  // Current club from your hook (exported from useClubTheme module)
   const currentClub: ClubKey = useClub();
 
   const y = useRef(new Animated.Value(0)).current;
   const [modalVisible, setModalVisible] = useState(false);
   const [selected, setSelected] = useState<Offer | null>(null);
-
+  const [points, setPoints] = useState(3500);
   const [levelsModalVisibility, setLevelsVisible] = useState(false);
+
+  const { current, next, progress, toNext } = getProgress(points);
 
   const headerTranslateY = y.interpolate({
     inputRange: [0, HEADER_HEIGHT],
@@ -81,7 +82,6 @@ export default function MainPage() {
     setModalVisible(true);
   };
   const closeModal = () => setModalVisible(false);
-  
 
   const isLightBg = theme.background === "#FFFFFF";
   const assets = OFFER_ASSETS[currentClub];
@@ -101,10 +101,16 @@ export default function MainPage() {
           <View>
             <Text style={[styles.greeting, { color: theme.onPrimary }]}>שלום אנטון</Text>
             <Text style={[styles.subtitle, { color: theme.onPrimary }]}>
-              {currentClub === "hapoel-tel-aviv" ? "אוהד הפועל תל אביב" : "אוהד מכבי חיפה"}
+              {currentClub === "hapoel-tel-aviv"
+                ? "אוהד הפועל תל אביב"
+                : "אוהד מכבי חיפה"}
             </Text>
           </View>
-          <Image source={CLUB_LOGOS[currentClub]} style={styles.logo} resizeMode="contain" />
+          <Image
+            source={CLUB_LOGOS[currentClub]}
+            style={styles.logo}
+            resizeMode="contain"
+          />
         </SafeAreaView>
       </Animated.View>
 
@@ -127,7 +133,7 @@ export default function MainPage() {
       >
         <View style={{ height: HEADER_HEIGHT }} />
 
-        {/* Points card */}
+        {/* ✅ Points card with progress + icons */}
         <TouchableOpacity
           onPress={() => setLevelsVisible(true)}
           style={[
@@ -138,32 +144,79 @@ export default function MainPage() {
             },
           ]}
         >
-          <Text style={[styles.cardTitle, { color: theme.text }]}>⭐ נקודות דיגיטליות</Text>
-          <Text style={[styles.points, { color: theme.primary }]}>5,778</Text>
+          <Text style={[styles.cardTitle, { color: theme.text }]}>
+            ⭐ נקודות דיגיטליות
+          </Text>
+          <Text style={[styles.points, { color: theme.primary }]}>
+            {points.toLocaleString()}
+          </Text>
           <Text style={[styles.growth, { color: "#12B886" }]}>+250 השבוע</Text>
 
-          <View style={styles.progressContainer}>
-            <View
-              style={[
-                styles.progressBar,
-                { backgroundColor: isLightBg ? "#eee" : "#2a2d31" },
-              ]}
+          <View style={styles.progressRow}>
+            {/* current tier icon */}
+            <LinearGradient
+              colors={[current.colorFrom, current.colorTo]}
+              start={{ x: 0, y: 0 }}
+              end={{ x: 1, y: 1 }}
+              style={styles.tierIconWrap}
             >
+              <MaterialIcons name={current.icon as any} size={14} color="#212121" />
+            </LinearGradient>
+
+            {/* progress bar + label */}
+            <View style={styles.progressBarWrapper}>
               <View
                 style={[
-                  styles.progressFill,
-                  { width: "75%", backgroundColor: theme.primary },
+                  styles.progressBar,
+                  { backgroundColor: isLightBg ? "#eee" : "#2a2d31" },
                 ]}
-              />
+              >
+                <View
+                  style={[
+                    styles.progressFill,
+                    {
+                      width: `${Math.round(progress * 100)}%`,
+                      backgroundColor: current.colorTo,
+                    },
+                  ]}
+                />
+              </View>
+              {next ? (
+                <Text
+                  style={[
+                    styles.progressText,
+                    { color: isLightBg ? "#666" : "#B7BCC1" },
+                  ]}
+                >
+                  עוד {toNext.toLocaleString()} נקודות לדרגת {next.name}
+                </Text>
+              ) : (
+                <Text
+                  style={[
+                    styles.progressText,
+                    { color: isLightBg ? "#666" : "#B7BCC1" },
+                  ]}
+                >
+                  הגעת לדרגת {current.name} 🎉
+                </Text>
+              )}
             </View>
-            <Text
-              style={[
-                styles.progressText,
-                { color: isLightBg ? "#666" : "#B7BCC1" },
-              ]}
-            >
-              עוד 1,250 נקודות לדרגת זהב
-            </Text>
+
+            {/* next tier icon (hidden if last level) */}
+            {next && (
+              <LinearGradient
+                colors={[next.colorFrom, next.colorTo]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.tierIconWrap}
+              >
+                <MaterialIcons
+                  name={next.icon as any}
+                  size={14}
+                  color="#212121"
+                />
+              </LinearGradient>
+            )}
           </View>
         </TouchableOpacity>
 
@@ -252,7 +305,9 @@ export default function MainPage() {
         visible={levelsModalVisibility}
         onClose={() => setLevelsVisible(false)}
         onDismiss={() => {}}
-        userPoints={5400}
+        userPoints={points}
+        onIncrement={() => setPoints((p) => p + 500)}
+        onDecrement={() => setPoints((p) => p - 500)}
       />
     </View>
   );
@@ -260,7 +315,6 @@ export default function MainPage() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-
   header: {
     position: "absolute",
     top: 0,
@@ -273,7 +327,6 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   scroller: { flex: 1, zIndex: 5 },
-
   innerHeaderContainer: {
     flex: 1,
     flexDirection: "row",
@@ -284,7 +337,6 @@ const styles = StyleSheet.create({
   greeting: { fontSize: 20, fontWeight: "700", textAlign: "left" },
   subtitle: { fontSize: 14, textAlign: "left", marginTop: 4 },
   logo: { width: 82, height: 82, marginLeft: 8 },
-
   card: {
     zIndex: 10,
     marginHorizontal: 16,
@@ -297,7 +349,6 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     marginTop: -40,
   },
-
   cardTitle: { fontSize: 14 },
   points: { fontSize: 44, fontWeight: "bold", marginVertical: 8 },
   growth: { fontSize: 14 },
@@ -312,8 +363,31 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
 
-  progressContainer: { width: "100%", marginTop: 12 },
-  progressBar: { height: 10, borderRadius: 6, overflow: "hidden", marginBottom: 6 },
+  progressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 12,
+  },
+  progressBarWrapper: {
+    flex: 1,
+    marginHorizontal: 8,
+    alignItems: "center",
+  },
+  progressBar: {
+    height: 10,
+    borderRadius: 6,
+    overflow: "hidden",
+    width: "100%",
+    marginBottom: 4,
+  },
   progressFill: { height: "100%", borderRadius: 6 },
   progressText: { fontSize: 12, textAlign: "center" },
+
+  tierIconWrap: {
+    width: 24,
+    height: 24,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 });
