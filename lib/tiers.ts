@@ -2,20 +2,59 @@
 export type TierKey = "silver" | "gold" | "diamond";
 
 export type Tier = {
-  key: TierKey;
-  name: string;
-  min: number;
-  colorFrom: string;
-  colorTo: string;
-  icon: string;
-  perks: string[];
-};
-
-export const TIERS: Tier[] = [
-  { key: "silver", name: "כסף", min: 0, colorFrom: "#B0BEC5", colorTo: "#90A4AE", icon: "military-tech", perks: [] },
-  { key: "gold", name: "זהב", min: 5000, colorFrom: "#FFC107", colorTo: "#FFB300", icon: "workspace-premium", perks: [] },
-  { key: "diamond", name: "יהלום", min: 15000, colorFrom: "#80DEEA", colorTo: "#26C6DA", icon: "diamond", perks: [] },
-];
+    key: string;
+    name: string;
+    min: number;
+    icon: string;
+    colorFrom: string;
+    colorTo: string;
+    perks: string[];
+    description: string; // 👈 new
+  };
+  
+  export const TIERS: Tier[] = [
+    {
+      key: "bronze",
+      name: "ברונזה",
+      min: 0,
+      icon: "star-border",
+      colorFrom: "#d7ccc8",
+      colorTo: "#a1887f",
+      description: "הדרגה הראשונה לכל משתמש חדש.",
+      perks: ["הטבות בסיסיות", "צבירת נקודות על רכישות"],
+    },
+    {
+      key: "silver",
+      name: "כסף",
+      min: 2000,
+      icon: "star-half",
+      colorFrom: "#cfd8dc",
+      colorTo: "#90a4ae",
+      description: "דרגה מתקדמת עם יותר יתרונות.",
+      perks: ["הנחות מיוחדות", "מבצעים בלעדיים"],
+    },
+    {
+      key: "gold",
+      name: "זהב",
+      min: 5000,
+      icon: "star",
+      colorFrom: "#ffd54f",
+      colorTo: "#ffb300",
+      description: "דרגה יוקרתית עם יתרונות רבים.",
+      perks: ["כרטיסים חינם", "שירות VIP", "מתנות מיוחדות"],
+    },
+    {
+      key: "diamond",
+      name: "יהלום",
+      min: 10000,
+      icon: "diamond",
+      colorFrom: "#80deea",
+      colorTo: "#26c6da",
+      description: "הדרגה הגבוהה ביותר — כל הכבוד!",
+      perks: ["הטבות מקסימליות", "גישה ראשונה לכל האירועים"],
+    },
+  ];
+  
 
 export function getCurrentTier(points: number): Tier {
   return TIERS.slice().reverse().find(t => points >= t.min) || TIERS[0];

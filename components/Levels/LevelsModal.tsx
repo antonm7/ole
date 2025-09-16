@@ -257,6 +257,10 @@ function TierRow({ tier, highlight }: { tier: Tier; highlight?: boolean }) {
         <Text style={styles.tierTitle}>
           דרגת {tier.name} · החל מ־{tier.min.toLocaleString()} נק׳
         </Text>
+
+        {/* 👇 add description under title */}
+        <Text style={styles.tierDescription}>{tier.description}</Text>
+
         {tier.perks.map((p, i) => (
           <View key={i} style={styles.perkRow}>
             <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
@@ -267,6 +271,7 @@ function TierRow({ tier, highlight }: { tier: Tier; highlight?: boolean }) {
     </View>
   );
 }
+
 
 
 const styles = StyleSheet.create({
@@ -333,4 +338,10 @@ const styles = StyleSheet.create({
   btnText: { fontSize: 16, fontWeight: '700' },
   btnTextPrimary: { color: '#fff' },
   btnTextSecondary: { color: '#333' },
+  tierDescription: {
+    fontSize: 13,
+    color: "#666",
+    marginBottom: 6,
+    textAlign: "left",
+  },
 });
