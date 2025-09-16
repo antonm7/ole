@@ -202,7 +202,6 @@ export default function HomePage() {
               )}
             </View>
 
-            {/* next tier icon (hidden if last level) */}
             {next && (
               <LinearGradient
                 colors={[next.colorFrom, next.colorTo]}

@@ -1,4 +1,3 @@
-// lib/tiers.ts
 export type TierKey = "silver" | "gold" | "diamond";
 
 export type Tier = {
@@ -9,7 +8,7 @@ export type Tier = {
     colorFrom: string;
     colorTo: string;
     perks: string[];
-    description: string; // 👈 new
+    description: string;
   };
   
   export const TIERS: Tier[] = [
