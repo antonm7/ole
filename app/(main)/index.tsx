@@ -5,6 +5,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRef, useState } from "react";
 import {
   Animated,
+  Dimensions,
   Image,
   Platform,
   SafeAreaView,
@@ -13,6 +14,11 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import AnimatedReanimated, {
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
+import Carousel from "react-native-reanimated-carousel";
 
 import { LevelsModal } from "@/components/Levels/LevelsModal";
 import { type ClubKey } from "@/constants/Colors";
@@ -20,6 +26,7 @@ import { useClub, useClubTheme } from "@/hooks/useClubTheme";
 import { getProgress } from "@/lib/tiers"; // 👈 shared logic
 
 const HEADER_HEIGHT = 200;
+const { width } = Dimensions.get("window");
 
 /** ✅ Static require maps */
 const CLUB_LOGOS: Record<ClubKey, any> = {
@@ -62,6 +69,7 @@ export default function HomePage() {
   const [selected, setSelected] = useState<Offer | null>(null);
   const [points, setPoints] = useState(3500);
   const [levelsModalVisibility, setLevelsVisible] = useState(false);
+  const progressOffers = useSharedValue(0);
 
   const { current, next, progress, toNext } = getProgress(points);
 
@@ -85,6 +93,60 @@ export default function HomePage() {
 
   const isLightBg = theme.background === "#FFFFFF";
   const assets = OFFER_ASSETS[currentClub];
+
+  // 🔥 Offers array for carousel
+  const offers = [
+    {
+      image: assets.shirt,
+      title: "חולצת בית רשמית 2024",
+      description:
+        currentClub === "hapoel-tel-aviv"
+          ? "החולצה החדשה של הפועל תל אביב לעונת 2024. איכות פרימיום עם רקמת הלוגו הרשמי."
+          : "החולצה החדשה של מכבי חיפה לעונת 2024. איכות פרימיום עם רקמת הלוגו הרשמי.",
+      expiresAt: "31/12",
+      points: 2500,
+    },
+    {
+      image: assets.scarf,
+      title: "צעיף רשמי – חורף",
+      description:
+        currentClub === "hapoel-tel-aviv"
+          ? "צעיף אדום-לבן איכותי, מחמם וסטייליסטי ליציע."
+          : "צעיף ירוק-לבן איכותי, מחמם וסטייליסטי ליציע.",
+      expiresAt: "15/01",
+      points: 1200,
+    },
+    {
+      image: assets.ticket,
+      title: "הנחה של 25% על כרטיס משחק",
+      description:
+        currentClub === "hapoel-tel-aviv"
+          ? "קוד קופון למשחק בית הקרוב של הפועל."
+          : "קוד קופון למשחק בית הקרוב של מכבי.",
+      expiresAt: "30/11",
+      points: 1000,
+    },
+    {
+      image: assets.sponsor1,
+      title: "ייעוץ לפני קניית רכב",
+      description:
+        currentClub === "hapoel-tel-aviv"
+          ? "זמן טוב לקנות רכב! קבל פגישת ייעוץ אצל שלמה סיקסט"
+          : "הנחה של 10% בחנות של אדידס",
+      expiresAt: "30/11",
+      points: 3750,
+    },
+    {
+      image: assets.sponsor2,
+      title: "200 שקל להשקעה ב IBI",
+      description:
+        currentClub === "hapoel-tel-aviv"
+          ? "200 שקל שתוכל להשקיע ולהפקיד בבית ההשקעות IBI."
+          : "הנחה של 18% לסרט ביס פלאנט",
+      expiresAt: "30/11",
+      points: 900,
+    },
+  ];
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -133,7 +195,7 @@ export default function HomePage() {
       >
         <View style={{ height: HEADER_HEIGHT }} />
 
-        {/* ✅ Points card with progress + icons */}
+        {/* ✅ Points card */}
         <TouchableOpacity
           onPress={() => setLevelsVisible(true)}
           style={[
@@ -153,7 +215,6 @@ export default function HomePage() {
           <Text style={[styles.growth, { color: "#12B886" }]}>+250 השבוע</Text>
 
           <View style={styles.progressRow}>
-            {/* current tier icon */}
             <LinearGradient
               colors={[current.colorFrom, current.colorTo]}
               start={{ x: 0, y: 0 }}
@@ -163,7 +224,6 @@ export default function HomePage() {
               <MaterialIcons name={current.icon as any} size={14} color="#212121" />
             </LinearGradient>
 
-            {/* progress bar + label */}
             <View style={styles.progressBarWrapper}>
               <View
                 style={[
@@ -219,7 +279,7 @@ export default function HomePage() {
           </View>
         </TouchableOpacity>
 
-        {/* Offers */}
+        {/* ✅ Offers carousel */}
         <View style={styles.offers}>
           <Text
             style={[
@@ -230,70 +290,57 @@ export default function HomePage() {
             הצעות מובחרות
           </Text>
 
-          <OfferCard
-            image={assets.shirt}
-            title="חולצת בית רשמית 2024"
-            description={
-              currentClub === "hapoel-tel-aviv"
-                ? "החולצה החדשה של הפועל תל אביב לעונת 2024. איכות פרימיום עם רקמת הלוגו הרשמי."
-                : "החולצה החדשה של מכבי חיפה לעונת 2024. איכות פרימיום עם רקמת הלוגו הרשמי."
-            }
-            expiresAt="31/12"
-            points={2500}
-            onPress={openOffer}
+          <Carousel
+            loop
+            autoPlay
+            autoPlayInterval={3000}
+            width={width * 0.85}
+            height={205}
+            style={{ alignSelf: "center" }}
+            data={offers}
+            scrollAnimationDuration={800}
+            onProgressChange={(_, absoluteProgress) => {
+              progressOffers.value = absoluteProgress;
+            }}
+            renderItem={({ item }) => (
+              <OfferCard
+                {...item}
+                onPress={() => openOffer(item)}
+              />
+            )}
           />
-          <OfferCard
-            image={assets.scarf}
-            title="צעיף רשמי – חורף"
-            description={
-              currentClub === "hapoel-tel-aviv"
-                ? "צעיף אדום-לבן איכותי, מחמם וסטייליסטי ליציע."
-                : "צעיף ירוק-לבן איכותי, מחמם וסטייליסטי ליציע."
-            }
-            expiresAt="15/01"
-            points={1200}
-            onPress={openOffer}
-          />
-          <OfferCard
-            image={assets.ticket}
-            title="הנחה של 25% על כרטיס משחק"
-            description={
-              currentClub === "hapoel-tel-aviv"
-                ? "קוד קופון למשחק בית הקרוב של הפועל."
-                : "קוד קופון למשחק בית הקרוב של מכבי."
-            }
-            expiresAt="30/11"
-            points={1000}
-            onPress={openOffer}
-          />
-          <OfferCard
-            image={assets.sponsor1}
-            title="ייעוץ לפני קניית רכב"
-            description={
-              currentClub === "hapoel-tel-aviv"
-                ? "זמן טוב לקנות רכב! קבל פגישת ייעוץ אצל שלמה סיקסט"
-                : "הנחה של 10% בחנות של אדידס"
-            }
-            expiresAt="30/11"
-            points={3750}
-            onPress={openOffer}
-          />
-          <OfferCard
-            image={assets.sponsor2}
-            title="200 שקל להשקעה ב IBI"
-            description={
-              currentClub === "hapoel-tel-aviv"
-                ? "200 שקל שתוכל להשקיע ולהפקיד בבית ההשקעות IBI."
-                : "הנחה של 18% לסרט ביס פלאנט"
-            }
-            expiresAt="30/11"
-            points={900}
-            onPress={openOffer}
-          />
+          {/* ✅ Dots */}
+          <View style={{ flexDirection: "row", justifyContent: "center" }}>
+            {offers.map((_, index) => {
+              const animatedDotStyle = useAnimatedStyle(() => {
+                const activeIndex = Math.round(progressOffers.value);
+                return {
+                  opacity: activeIndex === index ? 1 : 0.3,
+                  transform: [{ scale: activeIndex === index ? 1.2 : 1 }],
+                };
+              });
+
+              return (
+                <AnimatedReanimated.View
+                  key={index}
+                  style={[
+                    {
+                      width: 6,
+                      height: 6,
+                      borderRadius: 4,
+                      marginHorizontal: 4,
+                      backgroundColor: "gray",
+                    },
+                    animatedDotStyle,
+                  ]}
+                />
+              );
+            })}
+          </View>
         </View>
       </Animated.ScrollView>
 
-      {/* Bottom Modal */}
+      {/* Modals */}
       <InfoModal
         modalVisible={modalVisible}
         closeModal={closeModal}

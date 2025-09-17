@@ -1,6 +1,5 @@
 // app/(tabs)/_layout.tsx
 import { Tabs } from "expo-router";
-import React from "react";
 import { Platform } from "react-native";
 
 import { HapticTab } from "@/components/HapticTab";
@@ -8,6 +7,7 @@ import { IconSymbol } from "@/components/ui/IconSymbol";
 import TabBarBackground from "@/components/ui/TabBarBackground";
 
 import { useClubTheme } from "@/hooks/useClubTheme"; // ✅ single theme hook
+import "react-native-reanimated";
 
 export default function TabLayout() {
   // Club-aware theme (hook resolves club + light/dark automatically)
