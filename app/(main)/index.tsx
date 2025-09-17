@@ -294,7 +294,7 @@ export default function HomePage() {
             loop
             autoPlay
             autoPlayInterval={3000}
-            width={width * 0.85}
+            width={width * 0.95}
             height={205}
             style={{ alignSelf: "center" }}
             data={offers}
