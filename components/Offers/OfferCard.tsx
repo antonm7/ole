@@ -72,7 +72,7 @@ const CARD_HEIGHT = 180;
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: "#FAFAFA",
+    backgroundColor: "#EEEDEDA8",
     borderRadius: 6,
     padding: 16,
     marginHorizontal: 12,
