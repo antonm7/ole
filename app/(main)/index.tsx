@@ -309,7 +309,6 @@ export default function HomePage() {
               />
             )}
           />
-          {/* ✅ Dots */}
           <View style={{ flexDirection: "row", justifyContent: "center" }}>
             {offers.map((_, index) => {
               const animatedDotStyle = useAnimatedStyle(() => {
@@ -403,7 +402,7 @@ const styles = StyleSheet.create({
   offersTitle: {
     fontSize: 16,
     fontWeight: "600",
-    marginBottom: 12,
+    marginBottom: 8,
     textAlign: "left",
     borderRightWidth: 4,
     paddingHorizontal: 12,
