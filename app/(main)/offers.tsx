@@ -9,6 +9,7 @@ import {
     ScrollView,
     StyleSheet,
     Text,
+    TouchableOpacity,
     View,
 } from "react-native";
 
@@ -25,13 +26,16 @@ export default function OffersPage() {
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selected, setSelected] = useState<Offer | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState("הכל");
 
   const categories: OfferCategory[] = [
     {
       title: "חופשות",
       offers: [
         {
-          image: { uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjbrQ-htP70WlDLQ5TewFYDVVvGPOOzbGoTQ&s" },
+          image: {
+            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTjbrQ-htP70WlDLQ5TewFYDVVvGPOOzbGoTQ&s",
+          },
           title: "סופ״ש זוגי באילת",
           description: "2 לילות כולל ארוחת בוקר.",
           expiresAt: "01/12/2025",
@@ -50,14 +54,18 @@ export default function OffersPage() {
       title: "חשמל וריהוט",
       offers: [
         {
-          image: { uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY0MHWYO1JLwEYQ_qfiWc7RK-6XBisrU4KpA&s" },
+          image: {
+            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQY0MHWYO1JLwEYQ_qfiWc7RK-6XBisrU4KpA&s",
+          },
           title: "טלוויזיה 55״ LG",
           description: "מסך 4K חכם בהנחת מועדון.",
           expiresAt: "30/11/2025",
           points: 3500,
         },
         {
-          image: { uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSXjzBVCKWErPg3xYZ-ZFM2LXLE9NRSypt4A&s" },
+          image: {
+            uri: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRSXjzBVCKWErPg3xYZ-ZFM2LXLE9NRSypt4A&s",
+          },
           title: "מיקסר קיטשן-אייד",
           description: "כולל סט אביזרים מלא.",
           expiresAt: "15/12/2025",
@@ -76,7 +84,9 @@ export default function OffersPage() {
           points: 950,
         },
         {
-          image: { uri: "https://media.dolcemaster.co.il/products/oJASmBro8oEIzmluVsP7TRyGS3BiZd44oxc0aR2P.jpg" },
+          image: {
+            uri: "https://media.dolcemaster.co.il/products/oJASmBro8oEIzmluVsP7TRyGS3BiZd44oxc0aR2P.jpg",
+          },
           title: "תו קנייה בשווי 200 ש׳׳ח",
           description: "תו קנייה בשווי 200 ש׳׳ח ברשת אוטו דיפוט",
           expiresAt: "10/01/2026",
@@ -94,49 +104,84 @@ export default function OffersPage() {
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: theme.background }]}>
       <ScrollView contentContainerStyle={{ paddingBottom: 60 }}>
-        
         {/* Page Title */}
-        <Text style={[styles.pageTitle, { color: theme.text }]}>
-          🎁 הטבות ומבצעים
-        </Text>
+        <Text style={[styles.pageTitle, { color: theme.text }]}>🎁 הטבות ומבצעים</Text>
 
-        {categories.map((cat, idx) => (
-          <View key={idx} style={styles.categorySection}>
-            
-            {/* Section header */}
-            <View style={styles.sectionHeader}>
-              <View
-                style={[
-                  styles.sectionAccent,
-                  { backgroundColor: theme.primary },
-                ]}
-              />
+        {/* Category slider */}
+        <FlatList
+          data={[{ title: "הכל", offers: [] }, ...categories]}
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          keyExtractor={(item) => item.title}
+          contentContainerStyle={{ paddingHorizontal: 16 }}
+          ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
+          renderItem={({ item }) => (
+            <TouchableOpacity
+              onPress={() => setSelectedCategory(item.title)}
+              style={[
+                styles.categoryPill,
+                {
+                  backgroundColor:
+                    selectedCategory === item.title
+                      ? theme.primary
+                      : theme.background,
+                  borderColor: theme.primary,
+                },
+              ]}
+            >
               <Text
-                style={[styles.categoryTitle, { color: theme.text }]}
+                style={{
+                  color: selectedCategory === item.title ? "#fff" : theme.text,
+                  fontWeight: "600",
+                }}
               >
-                {cat.title}
+                {item.title}
               </Text>
-            </View>
+            </TouchableOpacity>
+          )}
+        />
 
-            {/* Offers carousel */}
-            <FlatList
-              data={cat.offers}
-              horizontal
-              keyExtractor={(_, i) => i.toString()}
-              showsHorizontalScrollIndicator={false}
-              contentContainerStyle={{ paddingHorizontal: 12 }}
-              ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
-              renderItem={({ item }) => (
-                <View style={styles.cardWrapper}>
-                  <OfferCard {...item} onPress={() => openOffer(item)} />
+        {/* Offers display */}
+        {selectedCategory === "הכל"
+          ? categories.map((cat, idx) => (
+              <View key={idx} style={styles.categorySection}>
+                <Text style={[styles.categoryTitle, { color: theme.text }]}>
+                  {cat.title}
+                </Text>
+                <FlatList
+                  data={cat.offers}
+                  horizontal
+                  keyExtractor={(_, i) => i.toString()}
+                  showsHorizontalScrollIndicator={false}
+                  contentContainerStyle={{ paddingHorizontal: 12 }}
+                  ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
+                  renderItem={({ item }) => (
+                    <View style={styles.cardWrapper}>
+                      <OfferCard {...item} onPress={() => openOffer(item)} />
+                    </View>
+                  )}
+                  snapToInterval={width * 0.75 + 12}
+                  snapToAlignment="start"
+                  decelerationRate="fast"
+                />
+              </View>
+            ))
+          : (() => {
+              const cat = categories.find((c) => c.title === selectedCategory);
+              if (!cat) return null;
+              return (
+                <View style={styles.categorySection}>
+                  <Text style={[styles.categoryTitle, { color: theme.text }]}>
+                    {cat.title}
+                  </Text>
+                  {cat.offers.map((item, i) => (
+                    <View key={i} style={[styles.cardWrapper, { marginHorizontal: 16, marginBottom: 16 }]}>
+                      <OfferCard {...item} onPress={() => openOffer(item)} />
+                    </View>
+                  ))}
                 </View>
-              )}
-              snapToInterval={width * 0.75 + 12}
-              snapToAlignment="start"
-              decelerationRate="fast"
-            />
-          </View>
-        ))}
+              );
+            })()}
       </ScrollView>
 
       {/* Modal */}
@@ -152,35 +197,32 @@ export default function OffersPage() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  
+
   pageTitle: {
     fontSize: 26,
     fontWeight: "800",
-    textAlign: "left", // 👈 force left
+    textAlign: "left",
     marginVertical: 20,
     marginLeft: 16,
   },
 
-  categorySection: {
-    marginBottom: 24,
+  categoryPill: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 20,
+    borderWidth: 1,
   },
 
-  sectionHeader: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 12,
-    marginHorizontal: 16,
+  categorySection: {
+    marginTop: 24,
   },
-  sectionAccent: {
-    width: 6,
-    height: 20,
-    borderRadius: 4,
-    marginRight: 8,
-  },
+
   categoryTitle: {
     fontSize: 20,
     fontWeight: "700",
-    textAlign: "left", // 👈 force left
+    marginLeft: 16,
+    marginBottom: 12,
+    textAlign: "left",
   },
 
   cardWrapper: {

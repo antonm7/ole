@@ -11,7 +11,7 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import Carousel from "react-native-reanimated-carousel";
@@ -91,9 +91,7 @@ export default function HomePage() {
 
   const offers: Offer[] = [
     {
-      image: {
-        uri: "https://static.vecteezy.com/system/resources/thumbnails/038/516/357/small_2x/ai-generated-eagle-logo-design-in-black-style-on-transparant-background-png.png",
-      },
+      image: assets.shirt,
       title: "חולצת בית רשמית 2024",
       description:
         currentClub === "hapoel-tel-aviv"
@@ -162,7 +160,7 @@ export default function HomePage() {
       >
         <View style={{ height: HEADER_HEIGHT }} />
 
-        {/* Points card */}
+        {/* ✅ Points card with progress */}
         <TouchableOpacity
           onPress={() => setLevelsVisible(true)}
           style={[
@@ -173,11 +171,62 @@ export default function HomePage() {
             },
           ]}
         >
-          <Text style={[styles.cardTitle, { color: theme.text }]}>⭐ נקודות דיגיטליות</Text>
+          <Text style={[styles.cardTitle, { color: theme.text }]}>
+            ⭐ נקודות דיגיטליות
+          </Text>
+
           <Text style={[styles.points, { color: theme.primary }]}>
             {points.toLocaleString()}
           </Text>
+
           <Text style={[styles.growth, { color: "#12B886" }]}>+250 השבוע</Text>
+
+          {/* Progress Row */}
+          <View style={styles.progressRow}>
+            {/* Current tier icon */}
+            <LinearGradient
+              colors={[current.colorFrom, current.colorTo]}
+              style={styles.tierIconWrap}
+            >
+              <MaterialIcons name={current.icon as any} size={14} color="#212121" />
+            </LinearGradient>
+
+            {/* Progress bar */}
+            <View style={styles.progressBarWrapper}>
+              <View
+                style={[
+                  styles.progressBar,
+                  { backgroundColor: isLightBg ? "#eee" : "#2a2d31" },
+                ]}
+              >
+                <View
+                  style={[
+                    styles.progressFill,
+                    { width: `${progress * 100}%`, backgroundColor: current.colorTo },
+                  ]}
+                />
+              </View>
+              {next ? (
+                <Text style={[styles.progressText, { color: theme.text }]}>
+                  עוד {toNext.toLocaleString()} נקודות לדרגת {next.name}
+                </Text>
+              ) : (
+                <Text style={[styles.progressText, { color: theme.text }]}>
+                  הגעת לדרגת {current.name} 🎉
+                </Text>
+              )}
+            </View>
+
+            {/* Next tier icon */}
+            {next && (
+              <LinearGradient
+                colors={[next.colorFrom, next.colorTo]}
+                style={styles.tierIconWrap}
+              >
+                <MaterialIcons name={next.icon as any} size={14} color="#212121" />
+              </LinearGradient>
+            )}
+          </View>
         </TouchableOpacity>
 
         {/* Offers carousel */}
@@ -196,7 +245,7 @@ export default function HomePage() {
             autoPlay
             autoPlayInterval={3000}
             width={width * 0.95}
-            height={205}
+            height={180}
             style={{ alignSelf: "center" }}
             data={offers}
             scrollAnimationDuration={800}
@@ -211,7 +260,7 @@ export default function HomePage() {
           />
         </View>
 
-        {/* Feature boxes */}
+        {/* ✅ Bottom feature boxes */}
         <View style={styles.featureRow}>
           {/* Leaderboard */}
           <TouchableOpacity
@@ -349,6 +398,34 @@ const styles = StyleSheet.create({
   points: { fontSize: 44, fontWeight: "bold", marginVertical: 8 },
   growth: { fontSize: 14 },
 
+  progressRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 12,
+  },
+  progressBarWrapper: {
+    flex: 1,
+    marginHorizontal: 8,
+    alignItems: "center",
+  },
+  progressBar: {
+    height: 10,
+    borderRadius: 6,
+    overflow: "hidden",
+    width: "100%",
+    marginBottom: 4,
+  },
+  progressFill: { height: "100%", borderRadius: 6 },
+  progressText: { fontSize: 12, textAlign: "center" },
+
+  tierIconWrap: {
+    width: 24,
+    height: 24,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+
   offers: { paddingHorizontal: 16, paddingVertical: 20 },
   offersTitle: {
     fontSize: 16,
@@ -370,7 +447,7 @@ const styles = StyleSheet.create({
     flex: 1,
     borderRadius: 20,
     overflow: "hidden",
-    minHeight: 100,
+    minHeight: 120,
     justifyContent: "center",
     padding: 20,
     borderWidth: 1,
