@@ -19,6 +19,7 @@ import Carousel from "react-native-reanimated-carousel";
 import { LevelsModal } from "@/components/Levels/LevelsModal";
 import { type ClubKey } from "@/constants/Colors";
 import { useClub, useClubTheme } from "@/hooks/useClubTheme";
+import { usePoints } from "@/hooks/usePoints"; // 👈 Zustand hook
 import { getProgress } from "@/lib/tiers";
 
 const HEADER_HEIGHT = 200;
@@ -62,9 +63,11 @@ export default function HomePage() {
   const y = useRef(new Animated.Value(0)).current;
   const [modalVisible, setModalVisible] = useState(false);
   const [selected, setSelected] = useState<Offer | null>(null);
-  const [points, setPoints] = useState(3500);
   const [levelsModalVisibility, setLevelsVisible] = useState(false);
   const progressOffers = useSharedValue(0);
+
+  // ✅ use global points from Zustand
+  const points = usePoints();
 
   const { current, next, progress, toNext } = getProgress(points);
 
@@ -351,9 +354,6 @@ export default function HomePage() {
         visible={levelsModalVisibility}
         onClose={() => setLevelsVisible(false)}
         onDismiss={() => {}}
-        userPoints={points}
-        onIncrement={() => setPoints((p) => p + 500)}
-        onDecrement={() => setPoints((p) => p - 500)}
       />
     </View>
   );
