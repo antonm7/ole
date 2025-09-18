@@ -35,21 +35,34 @@ export function OfferCard({
   return (
     <TapGestureHandler onActivated={() => onPress(offer)}>
       <View style={styles.card}>
-        {/* Top row */}
+        {/* 🔥 Top row */}
         <View style={styles.row}>
           <View style={styles.thumb}>
-            <Image source={image} style={styles.thumbImage} />
+            <Image
+              source={typeof image === "string" ? { uri: image } : image}
+              style={styles.thumbImage}
+            />
           </View>
 
           <View style={styles.content}>
-            <Text style={styles.title}>{title}</Text>
-            <Text numberOfLines={3} ellipsizeMode="tail" style={styles.desc}>
+            <Text
+              style={styles.title}
+              numberOfLines={1}
+              ellipsizeMode="tail"
+            >
+              {title}
+            </Text>
+            <Text
+              numberOfLines={2}
+              ellipsizeMode="tail"
+              style={styles.desc}
+            >
               {description}
             </Text>
           </View>
         </View>
 
-        {/* Bottom row */}
+        {/* 🔥 Bottom row */}
         <View style={styles.bottomRow}>
           <View style={styles.expiryWrap}>
             <Ionicons name="time-outline" size={16} color="#6B7280" />
@@ -72,14 +85,15 @@ const CARD_HEIGHT = 180;
 
 const styles = StyleSheet.create({
   card: {
+    flex: 1, // 👈 Expand to parent width (HomePage carousel = max width, OffersPage wrapper = fixed width)
+    height: CARD_HEIGHT,
     backgroundColor: "#EEEDEDA8",
     borderRadius: 6,
     padding: 16,
-    marginHorizontal: 12,
-    marginVertical: 12,
-    minHeight: CARD_HEIGHT,
-    maxHeight: CARD_HEIGHT,
+    marginHorizontal: 6,
+    marginVertical: 8,
     justifyContent: "space-between",
+    overflow: "hidden",
   },
   row: {
     flexDirection: "row",
