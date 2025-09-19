@@ -11,10 +11,12 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import Carousel from "react-native-reanimated-carousel";
+
+import PenaltyModal from "@/components/Game/PenaltyGame"; // adjust path
 
 import { LevelsModal } from "@/components/Levels/LevelsModal";
 import { type ClubKey } from "@/constants/Colors";
@@ -65,6 +67,7 @@ export default function HomePage() {
   const [selected, setSelected] = useState<Offer | null>(null);
   const [levelsModalVisibility, setLevelsVisible] = useState(false);
   const progressOffers = useSharedValue(0);
+  const [penaltyVisible, setPenaltyVisible] = useState(false); // 👈 new state
 
   // ✅ use global points from Zustand
   const points = usePoints();
@@ -312,7 +315,7 @@ export default function HomePage() {
                 borderColor: isLightBg ? "#E5E7EB" : "#3A3A3D",
               },
             ]}
-            onPress={() => null}
+            onPress={() => setPenaltyVisible(true)} 
             activeOpacity={0.9}
           >
             <MaterialIcons
@@ -355,6 +358,7 @@ export default function HomePage() {
         onClose={() => setLevelsVisible(false)}
         onDismiss={() => {}}
       />
+       <PenaltyModal visible={penaltyVisible} onClose={() => setPenaltyVisible(false)} />
     </View>
   );
 }
@@ -471,5 +475,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "500",
     textAlign: "left",
+  },
+  closeBtn: {
+    backgroundColor: "#d50000",
+    padding: 14,
+    borderRadius: 10,
+    alignItems: "center",
+    margin: 20,
+  },
+  closeText: {
+    color: "#fff",
+    fontWeight: "700",
+    fontSize: 16,
   },
 });
