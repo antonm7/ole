@@ -1,6 +1,6 @@
 // app/(auth)/signin.tsx
 import { router } from 'expo-router';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Alert,
   I18nManager,
@@ -10,19 +10,16 @@ import {
   StyleSheet,
   Text,
   TextInput,
-  View
+  View,
 } from 'react-native';
 
-
 import { CreditCardPreview } from '@/components/Special/CreditCardExample';
-
-// ✅ single theme hook for everything (global / club)
 import { useClubTheme, useSetClub } from '@/hooks/useClubTheme';
 
 export default function SignInScreen() {
-  // Neutral (non-club) palette
   const g = useClubTheme({ scope: 'global' });
   const setClub = useSetClub();
+
   const [phoneNumber, setPhoneNumber] = useState('');
   const [creditCardNumber, setCreditCardNumber] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,11 +31,11 @@ export default function SignInScreen() {
     }
     try {
       setIsSubmitting(true);
-      if(creditCardNumber === '1111 1111 1111 1111') {
+      if (creditCardNumber === '1111 1111 1111 1111') {
         setClub('maccabi-haifa');
       } else {
         setClub('hapoel-tel-aviv');
-      };
+      }
       router.replace('/(main)');
     } catch {
       Alert.alert('Sign-in failed', 'Please try again.');
@@ -64,15 +61,15 @@ export default function SignInScreen() {
     >
       <View style={[styles.container, { backgroundColor: g.background }]}>
         <View style={styles.header}>
-          <Text style={[styles.loginText, { color: g.text }]}>
-            התחבר
-          </Text>
-          <Text style={[styles.loginText, { color: g.icon,fontSize:16 }]}>
+          <Text style={[styles.title, { color: g.text }]}>התחבר</Text>
+          <Text style={[styles.subtitle, { color: g.icon }]}>
             הזן את פרטי האשראי שלך ואת מספר הטלפון
           </Text>
         </View>
 
-        <CreditCardPreview number={creditCardNumber} />
+        <View style={styles.cardWrapper}>
+          <CreditCardPreview number={creditCardNumber} />
+        </View>
 
         <View style={styles.form}>
           <TextInput
@@ -80,17 +77,14 @@ export default function SignInScreen() {
             onChangeText={(t) => setCreditCardNumber(formatCard(t))}
             placeholder="1234 5678 9012 3456"
             placeholderTextColor={g.icon}
-            autoCapitalize="none"
-            autoCorrect={false}
             keyboardType={Platform.select({ ios: 'number-pad', android: 'numeric' }) as any}
             textContentType="creditCardNumber"
             maxLength={19}
             style={[
               styles.input,
               {
-                borderColor: g.icon,
+                borderColor: g.globalButton ?? g.icon,
                 color: g.text,
-                backgroundColor: Platform.OS === 'ios' ? '#ffffff' : undefined,
               },
             ]}
           />
@@ -100,16 +94,13 @@ export default function SignInScreen() {
             onChangeText={setPhoneNumber}
             placeholder="מספר טלפון"
             placeholderTextColor={g.icon}
-            autoCapitalize="none"
-            autoCorrect={false}
             keyboardType="phone-pad"
             textContentType="telephoneNumber"
             style={[
               styles.input,
               {
-                borderColor: g.icon,
+                borderColor: g.globalButton ?? g.icon,
                 color: g.text,
-                backgroundColor: Platform.OS === 'ios' ? '#ffffff' : undefined,
               },
             ]}
           />
@@ -121,7 +112,7 @@ export default function SignInScreen() {
               styles.button,
               {
                 backgroundColor: g.globalButton ?? g.primary,
-                opacity: isSubmitting ? 0.6 : pressed ? 0.85 : 1,
+                opacity: isSubmitting ? 0.6 : pressed ? 0.9 : 1,
               },
             ]}
           >
@@ -136,18 +127,55 @@ export default function SignInScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, padding: 24, justifyContent: 'center', gap: 28 },
-  header: { gap: 6 },
-  form: { gap: 14 },
-  loginText: { textAlign: 'left',fontSize:22 },
+  container: {
+    flex: 1,
+    paddingHorizontal: 22,
+    paddingVertical: 40,
+    justifyContent: 'center',
+    gap: 32,
+  },
+  header: {
+    gap: 8,
+    alignItems: 'flex-start',
+  },
+  title: {
+    fontSize: 28,
+    fontWeight: '700',
+    letterSpacing: -0.5,
+  },
+  subtitle: {
+    fontSize: 16,
+    opacity: 0.8,
+  },
+  cardWrapper: {
+    alignItems: 'center',
+    marginVertical: 12,
+  },
+  form: {
+    gap: 18,
+  },
   input: {
     textAlign: 'right',
     borderWidth: 1,
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 14,
-    fontSize: 16,
+    borderRadius: 16,
+    paddingHorizontal: 18,
+    paddingVertical: 16,
+    fontSize: 17,
+    backgroundColor: 'rgba(255,255,255,0.05)',
   },
-  button: { borderRadius: 14, paddingVertical: 16, alignItems: 'center' },
-  buttonText: { fontSize: 16, fontWeight: '600' },
+  button: {
+    marginTop: 8,
+    borderRadius: 18,
+    paddingVertical: 18,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 2,
+  },
+  buttonText: {
+    fontSize: 17,
+    fontWeight: '600',
+    letterSpacing: 0.3,
+  },
 });

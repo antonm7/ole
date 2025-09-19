@@ -1,11 +1,11 @@
 // /hooks/useClubTheme.ts
 import {
-    getClubColors,
-    getGlobalColors,
-    type ClubKey,
-    type ClubTheme,
-    type GlobalTheme,
-    type ModeKey,
+  getClubColors,
+  getGlobalColors,
+  type ClubKey,
+  type ClubTheme,
+  type GlobalTheme,
+  type ModeKey,
 } from "@/constants/Colors";
 import { useColorScheme } from "react-native";
 import { create } from "zustand";
