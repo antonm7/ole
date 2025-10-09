@@ -2,17 +2,19 @@ import { InfoModal } from "@/components/Offers/InfoModal";
 import { OfferCard, type Offer } from "@/components/Offers/OfferCard";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { LinearGradient } from "expo-linear-gradient";
-import { useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   Alert,
   Animated,
   Dimensions,
   Image,
+  Modal,
   SafeAreaView,
+  ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View
+  View,
 } from "react-native";
 import { useSharedValue } from "react-native-reanimated";
 import Carousel from "react-native-reanimated-carousel";
@@ -26,7 +28,7 @@ import { usePoints, useSetPoints } from "@/hooks/usePoints";
 import { getProgress } from "@/lib/tiers";
 
 const HEADER_HEIGHT = 200;
-const { width } = Dimensions.get("window");
+const { width, height } = Dimensions.get("window");
 const VOTE_COST = 1250;
 const SECTION_GAP = 20; // consistent vertical spacing
 
@@ -47,6 +49,9 @@ export default function HomePage() {
   // vote state
   const [voteVisible, setVoteVisible] = useState(false);
   const [selectedHomeVersion, setSelectedHomeVersion] = useState<"A" | "B" | "C" | null>(null);
+
+  // friends modal state
+  const [friendsVisible, setFriendsVisible] = useState(false);
 
   const { current, next, progress, toNext } = getProgress(points);
 
@@ -71,7 +76,6 @@ export default function HomePage() {
   const assets = OFFER_ASSETS[currentClub];
 
   const offers: Offer[] = [
-    // שינוי מושב
     {
       image: assets.stadium,
       title: "שינוי מושב למשחק הבית הקרוב",
@@ -82,8 +86,6 @@ export default function HomePage() {
       expiresAt: "30/11",
       points: 600,
     },
-  
-    // הנחת כרטיס
     {
       image: assets.ticket,
       title: "הנחה של 25% על כרטיס משחק",
@@ -94,10 +96,8 @@ export default function HomePage() {
       expiresAt: "30/11",
       points: 1000,
     },
-  
-    // שובר חנות מועדון
     {
-      image:CLUB_LOGOS[currentClub], // אפשר להחליף לתמונה מחנות המועדון
+      image: CLUB_LOGOS[currentClub],
       title: "שובר 20% לחנות המועדון",
       description:
         currentClub === "hapoel-tel-aviv"
@@ -106,10 +106,8 @@ export default function HomePage() {
       expiresAt: "31/12",
       points: 900,
     },
-  
-    // חוויה במגרש / סיור
     {
-      image:assets.stadium,
+      image: assets.stadium,
       title: "סיור אצטדיון ומפגש צילום",
       description:
         currentClub === "hapoel-tel-aviv"
@@ -119,28 +117,23 @@ export default function HomePage() {
       points: 3200,
     },
   ];
-  
 
   const onTapVoteAd = () => {
     if (points < VOTE_COST) {
       Alert.alert("אין מספיק נקודות", `נדרשות ${VOTE_COST.toLocaleString()} נקודות כדי להשתתף בהצבעה.`);
       return;
     }
-    Alert.alert(
-      "להשתתף בהצבעה?",
-      `ההשתתפות עולה ${VOTE_COST.toLocaleString()} נקודות.`,
-      [
-        { text: "ביטול", style: "cancel" },
-        {
-          text: "המשך",
-          style: "default",
-          onPress: () => {
-            setSelectedHomeVersion(null);
-            setVoteVisible(true);
-          },
+    Alert.alert("להשתתף בהצבעה?", `ההשתתפות עולה ${VOTE_COST.toLocaleString()} נקודות.`, [
+      { text: "ביטול", style: "cancel" },
+      {
+        text: "המשך",
+        style: "default",
+        onPress: () => {
+          setSelectedHomeVersion(null);
+          setVoteVisible(true);
         },
-      ]
-    );
+      },
+    ]);
   };
 
   const submitVote = () => {
@@ -148,26 +141,48 @@ export default function HomePage() {
       Alert.alert("בחר גרסה", "בחר אחת משלוש גרסאות מדי הבית כדי להצביע.");
       return;
     }
-    // NOTE: if useSetPoints is "set absolute", this subtracts explicitly:
     redeem(points - VOTE_COST);
     setVoteVisible(false);
     setSelectedHomeVersion(null);
     Alert.alert("תודה!", "ההצבעה נרשמה בהצלחה. ⚽");
   };
 
-  // Softer selection visuals
-  const selectedBorder = `${theme.primary}66`; // 40% opacity
+  // selection visuals
+  const selectedBorder = `${theme.primary}66`;
   const selectedBg = isLightBg ? "rgba(0,0,0,0.06)" : "rgba(255,255,255,0.08)";
+
+  // friends data (with current user from Zustand)
+  const friends = useMemo(() => {
+    const base = [
+      { name: "איתי כהן", points: 7420 },
+      { name: "טל פרידמן", points: 6890 },
+      { name: "ליאור אזולאי", points: 6775 },
+      { name: "מאיה לוי", points: 6580 },
+      { name: "נעמה ברק", points: 6310 },
+      { name: "אורי נבון", points: 6120 },
+      { name: "שחר מזרחי", points: 5980 },
+      { name: "דנה שדה", points: 5815 },
+      { name: "עומר חיון", points: 5590 },
+      { name: "יובל רם", points: 5405 },
+    ];
+    const withMe = [...base, { name: "עידו ניצני", points }];
+    return withMe.sort((a, b) => b.points - a.points).map((f, i) => ({ ...f, rank: i + 1 }));
+  }, [points]);
+
+  // top-3 accent (thin side bar only, no fills)
+  const rankAccent = (rank: number) => {
+    if (rank === 1) return isLightBg ? "#F59E0B" : "#F59E0B";
+    if (rank === 2) return isLightBg ? "#94A3B8" : "#94A3B8";
+    if (rank === 3) return isLightBg ? "#EAB308" : "#EAB308";
+    return isLightBg ? "#E5E7EB" : "#2F3136";
+  };
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
       <Animated.View
         pointerEvents="none"
-        style={[
-          styles.header,
-          { transform: [{ translateY: headerTranslateY }], opacity: headerOpacity },
-        ]}
+        style={[styles.header, { transform: [{ translateY: headerTranslateY }], opacity: headerOpacity }]}
       >
         <LinearGradient colors={theme.headerGradient} style={StyleSheet.absoluteFill} />
         <SafeAreaView style={styles.innerHeaderContainer}>
@@ -185,19 +200,14 @@ export default function HomePage() {
         style={styles.scroller}
         contentContainerStyle={{ paddingBottom: 120 }}
         scrollEventThrottle={16}
-        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y } } }], {
-          useNativeDriver: true,
-        })}
+        onScroll={Animated.event([{ nativeEvent: { contentOffset: { y } } }], { useNativeDriver: true })}
       >
         <View style={{ height: HEADER_HEIGHT }} />
 
         {/* Points card */}
         <TouchableOpacity
           onPress={() => setLevelsVisible(true)}
-          style={[
-            styles.card,
-            { backgroundColor: isLightBg ? "#fff" : "#1d1f22", shadowOpacity: isLightBg ? 0.15 : 0.25 },
-          ]}
+          style={[styles.card, { backgroundColor: isLightBg ? "#fff" : "#1d1f22", shadowOpacity: isLightBg ? 0.15 : 0.25 }]}
           activeOpacity={0.9}
         >
           <Text style={[styles.cardTitle, { color: theme.text }]}>⭐ נקודות דיגיטליות</Text>
@@ -230,20 +240,15 @@ export default function HomePage() {
           </View>
         </TouchableOpacity>
 
-        {/* Vote banner (text-only + "חדש" tag) */}
+        {/* Vote banner (text-only) */}
         <TouchableOpacity onPress={onTapVoteAd} style={styles.voteSectionWrap} activeOpacity={0.95}>
-          <LinearGradient
-            colors={isLightBg ? ["#1E2B49", "#1f2937"] : ["#fef9c3", "#fde68a"]}
-            style={styles.voteSection}
-          >
+          <LinearGradient colors={isLightBg ? ["#1E2B49", "#1f2937"] : ["#fef9c3", "#fde68a"]} style={styles.voteSection}>
             <View style={styles.newTag}>
               <Text style={styles.newTagText}>חדש</Text>
             </View>
 
             <View style={styles.voteTextOnly}>
-              <Text style={[styles.voteTitle, { color: isLightBg ? "#e2e8f0" : "#111827" }]}>
-                הצביעו למדי הבית הבאים
-              </Text>
+              <Text style={[styles.voteTitle, { color: isLightBg ? "#e2e8f0" : "#111827" }]}>הצביעו למדי הבית הבאים</Text>
               <Text style={[styles.voteSubtitle, { color: isLightBg ? "#94a3b8" : "#1f2937" }]}>
                 השתתפות בהצבעה ב-{VOTE_COST.toLocaleString()} נקודות
               </Text>
@@ -257,9 +262,7 @@ export default function HomePage() {
 
         {/* Offers */}
         <View style={styles.offers}>
-          <Text style={[styles.offersTitle, { color: theme.text, borderRightColor: theme.primary }]}>
-            הצעות מובחרות
-          </Text>
+          <Text style={[styles.offersTitle, { color: theme.text, borderRightColor: theme.primary }]}>הצעות מובחרות</Text>
 
           <Carousel
             loop
@@ -279,22 +282,17 @@ export default function HomePage() {
           />
         </View>
 
-        {/* Friends table – full width, shorter height */}
-        <View style={styles.featureRow}>
+        {/* Friends feature tile */}
+        <View style={[styles.featureRow]}>
           <TouchableOpacity
             style={[
               styles.featureFull,
               { backgroundColor: isLightBg ? "#F9FAFB" : "#2A2A2D", borderColor: isLightBg ? "#E5E7EB" : "#3A3A3D" },
             ]}
-            onPress={() => null}
+            onPress={() => setFriendsVisible(true)}
             activeOpacity={0.9}
           >
-            <MaterialIcons
-              name="leaderboard"
-              size={110}
-              color={isLightBg ? "#C9CDD2" : "#3A3A3D"}
-              style={styles.backgroundIconCompact}
-            />
+            <MaterialIcons name="leaderboard" size={110} color={isLightBg ? "#C9CDD2" : "#3A3A3D"} style={styles.backgroundIconCompact} />
             <View style={styles.featureContent}>
               <Text style={[styles.featureTitle, { color: isLightBg ? "#111827" : "#F9FAFB" }]}>טבלת חברים</Text>
               <Text style={[styles.featureCTA, { color: isLightBg ? "#374151" : "#D1D5DB" }]}>לכניסה {">"}</Text>
@@ -317,7 +315,7 @@ export default function HomePage() {
               {[
                 { key: "A" as const, img: assets.shirt2, label: "אפשרות 1" },
                 { key: "B" as const, img: assets.shirt3, label: "אפשרות 2" },
-                { key: "C" as const, img: assets.shirt4, label: "אפשרות 3 "},
+                { key: "C" as const, img: assets.shirt4, label: "אפשרות 3 " },
               ].map((k) => {
                 const selected = selectedHomeVersion === k.key;
                 return (
@@ -326,8 +324,8 @@ export default function HomePage() {
                     style={[
                       styles.kitCard,
                       {
-                        borderColor: selected ? selectedBorder : (isLightBg ? "#E5E7EB" : "#33363B"),
-                        backgroundColor: selected ? selectedBg : (isLightBg ? "#F9FAFB" : "#24262A"),
+                        borderColor: selected ? selectedBorder : isLightBg ? "#E5E7EB" : "#33363B",
+                        backgroundColor: selected ? selectedBg : isLightBg ? "#F9FAFB" : "#24262A",
                       },
                     ]}
                     onPress={() => setSelectedHomeVersion(k.key)}
@@ -351,6 +349,94 @@ export default function HomePage() {
           </View>
         </View>
       )}
+
+      {/* Friends Table Modal — compact rows, horizontal layout, top-3 accent, clear points */}
+      <Modal
+        visible={friendsVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setFriendsVisible(false)}
+      >
+        <View style={styles.popupOverlay}>
+          <View
+            style={[
+              styles.friendsPopup,
+              { backgroundColor: isLightBg ? "#ffffff" : "#1F2226", borderColor: isLightBg ? "#E5E7EB" : "#2A2D31" },
+            ]}
+          >
+            {/* Top row */}
+            <View style={styles.popupTopRow}>
+              <Text style={[styles.popupTitle, { color: isLightBg ? "#0F172A" : "#E5E7EB" }]}>טבלת חברים</Text>
+              <TouchableOpacity
+                onPress={() => setFriendsVisible(false)}
+                style={[styles.modalCloseBtn, { backgroundColor: isLightBg ? "#EEF2F6" : "#23262B" }]}
+                activeOpacity={0.8}
+              >
+                <MaterialIcons name="close" size={18} color={isLightBg ? "#111827" : "#E5E7EB"} />
+              </TouchableOpacity>
+            </View>
+
+            {/* List */}
+            <ScrollView
+              style={styles.popupScroll}
+              contentContainerStyle={styles.popupScrollContent}
+              showsVerticalScrollIndicator
+              keyboardShouldPersistTaps="handled"
+              nestedScrollEnabled
+            >
+              {friends.map((f) => {
+                const isMe = f.name === "עידו ניצני";
+                const accent = rankAccent(f.rank);
+                return (
+                  <View
+                    key={f.name}
+                    style={[
+                      styles.friendRow,
+                      {
+                        backgroundColor: isMe
+                          ? (isLightBg ? "rgba(56,189,248,0.08)" : "rgba(56,189,248,0.12)")
+                          : (isLightBg ? "#FFFFFF" : "#22262B"),
+                        borderColor: isLightBg ? "#EDF2F7" : "#2E3237",
+                      },
+                    ]}
+                  >
+                    {/* thin accent bar for top-3 */}
+                    <View style={[styles.rankAccentBar, { backgroundColor: accent }]} />
+
+                    {/* rank */}
+                    <Text style={[styles.rankText, { color: isLightBg ? "#6B7280" : "#9CA3AF" }]}>#{f.rank}</Text>
+
+                    {/* avatar + name */}
+                    <View style={styles.rowCenter}>
+                      <Text
+                        style={[styles.friendNameRow, { color: isLightBg ? "#0F172A" : "#E5E7EB" }]}
+                        numberOfLines={1}
+                      >
+                        {f.name}
+                      </Text>
+                    </View>
+
+                    {/* points (no circle, clear emphasis) */}
+                    <Text style={[styles.pointsStrong, { color: isLightBg ? "#0C4A6E" : "#7DD3FC" }]}>
+                      {f.points.toLocaleString()} נק׳
+                    </Text>
+                  </View>
+                );
+              })}
+            </ScrollView>
+
+            {/* Footer actions */}
+            <View style={styles.sheetRow}>
+              <TouchableOpacity style={styles.sheetBtnGhost} onPress={() => setFriendsVisible(false)}>
+                <Text style={[styles.sheetBtnGhostText, { color: theme.primary }]}>סגור</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.sheetBtn, { backgroundColor: theme.primary }]}>
+                <Text style={styles.sheetBtnText}>הזמן חברים</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -369,12 +455,7 @@ const styles = StyleSheet.create({
     overflow: "hidden",
   },
   scroller: { flex: 1, zIndex: 5 },
-  innerHeaderContainer: {
-    flex: 1,
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
-  },
+  innerHeaderContainer: { flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "space-between" },
   greeting: { fontSize: 20, fontWeight: "700", textAlign: "left" },
   subtitle: { fontSize: 14, textAlign: "left", marginTop: 4 },
   logo: { width: 82, height: 82, marginLeft: 8 },
@@ -390,15 +471,15 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     marginTop: -40,
   },
-  cardTitle: { fontSize: 14 },
-  points: { fontSize: 44, fontWeight: "bold", marginVertical: 8 },
-  growth: { fontSize: 14 },
+  cardTitle: { fontSize: 14, textAlign: "left" },
+  points: { fontSize: 44, fontWeight: "bold", marginVertical: 8, textAlign: "left" },
+  growth: { fontSize: 14, textAlign: "left" },
 
   progressRow: { flexDirection: "row", alignItems: "center", marginTop: 12 },
   progressBarWrapper: { flex: 1, marginHorizontal: 8, alignItems: "center" },
   progressBar: { height: 10, borderRadius: 6, overflow: "hidden", width: "100%", marginBottom: 4 },
   progressFill: { height: "100%", borderRadius: 6 },
-  progressText: { fontSize: 12, textAlign: "center" },
+  progressText: { fontSize: 12, textAlign: "left" },
   tierIconWrap: { width: 24, height: 24, borderRadius: 14, alignItems: "center", justifyContent: "center" },
 
   // Vote banner
@@ -412,66 +493,130 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     justifyContent: "center",
   },
-  newTag: {
-    position: "absolute",
-    top: 10,
-    right: 10,
-    backgroundColor: "#ef4444",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 999,
-    zIndex: 2,
-  },
-  newTagText: { color: "#fff", fontWeight: "800", fontSize: 11 },
-  voteTextOnly: {
-    gap: 6,
-  },
+  newTag: { position: "absolute", top: 10, right: 10, backgroundColor: "#ef4444", paddingHorizontal: 10, paddingVertical: 5, borderRadius: 999, zIndex: 2 },
+  newTagText: { color: "#fff", fontWeight: "800", fontSize: 11, textAlign: "left" },
+  voteTextOnly: { gap: 6 },
   voteTitle: { fontSize: 18, fontWeight: "800", textAlign: "left" },
   voteSubtitle: { fontSize: 13, opacity: 0.9, textAlign: "left" },
   voteCtaRow: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 2 },
-  voteCTA: { fontSize: 14, fontWeight: "800" },
+  voteCTA: { fontSize: 14, fontWeight: "800", textAlign: "left" },
 
   offers: { paddingHorizontal: 16, paddingVertical: SECTION_GAP },
   offersTitle: { fontSize: 16, fontWeight: "600", marginBottom: 8, textAlign: "left", borderRightWidth: 4, paddingHorizontal: 12 },
 
-  // Friends table row (single full-width card)
+  // Friends feature tile
   featureRow: { paddingHorizontal: 16 },
   featureFull: {
     width: "100%",
     borderRadius: 16,
     overflow: "hidden",
-    minHeight: 90,              // ↓ shorter height
+    minHeight: 90,
     justifyContent: "center",
-    padding: 16,                // slightly smaller padding
+    padding: 16,
     borderWidth: 1,
   },
-  backgroundIconCompact: {
-    position: "absolute",
-    right: -18,
-    bottom: -14,
-    opacity: 0.14,
-  },
+  backgroundIconCompact: { position: "absolute", right: -18, bottom: -14, opacity: 0.14 },
   featureContent: { zIndex: 2 },
   featureTitle: { fontSize: 18, fontWeight: "700", marginBottom: 4, textAlign: "left" },
   featureCTA: { fontSize: 14, fontWeight: "500", textAlign: "left" },
 
-  // Modals (overlay + vote)
-  overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.35)", alignItems: "center", justifyContent: "center", zIndex: 50 },
+  // Overlay
+  overlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.35)",
+    alignItems: "center",
+    justifyContent: "center",
+    zIndex: 50,
+    paddingHorizontal: 10,
+  },
+
+  // Vote modal
   voteModal: { width: width * 0.92, borderRadius: 18, padding: 16 },
   voteHeader: { fontSize: 18, fontWeight: "800", marginBottom: 12, textAlign: "left" },
   kitsRow: { flexDirection: "row", justifyContent: "space-between", gap: 10, marginBottom: 12 },
   kitCard: { flex: 1, borderRadius: 14, borderWidth: 1, padding: 10, alignItems: "center" },
   kitImage: { width: "100%", height: 80, borderRadius: 10, marginBottom: 8 },
-  kitLabel: { fontSize: 13, fontWeight: "700" },
+  kitLabel: { fontSize: 13, fontWeight: "700", textAlign: "left" },
 
-  // Buttons row
-  sheetRow: { flexDirection: "row", gap: 10, justifyContent: "flex-end", marginTop: 6 },
+  /* =========================
+     Friends CENTERED POPUP
+     ========================= */
+  popupOverlay: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: "rgba(0,0,0,0.35)",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: 12,
+  },
+  friendsPopup: {
+    width: width * 0.92,
+    minHeight: Math.min(420, height * 0.6),
+    maxHeight: Math.min(640, height * 0.85),
+    borderRadius: 18,
+    borderWidth: 1,
+    overflow: "hidden",
+  },
+  popupTopRow: {
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    borderBottomColor: "#E5E7EB",
+  },
+  popupTitle: { fontSize: 16, fontWeight: "800", textAlign: "left", flex: 1 },
+
+  popupScroll: { width: "100%", maxHeight: Math.min(480, height * 0.6) },
+  popupScrollContent: { paddingHorizontal: 8, paddingVertical: 8, gap: 6 },
+
+  // NEW — compact horizontal friend row
+  friendRow: {
+    position: "relative",
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingVertical: 8,           // compact height
+    paddingHorizontal: 12,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  rankAccentBar: {
+    position: "absolute",
+    left: 0,                       // will mirror in RTL automatically
+    top: 8,
+    bottom: 8,
+    width: 3,
+    borderRadius: 2,
+  },
+  rankText: { width: 36, fontSize: 12, fontWeight: "700", textAlign: "left", opacity: 0.9 },
+
+  rowCenter: { flexDirection: "row", alignItems: "center", flex: 1, gap: 8 },
+  avatarTiny: {
+    width: 24, height: 24, borderRadius: 12, borderWidth: 1,
+    alignItems: "center", justifyContent: "center",
+  },
+  avatarTinyText: { fontSize: 10, fontWeight: "800", textAlign: "left" },
+  friendNameRow: { fontSize: 14, fontWeight: "800", textAlign: "left", flexShrink: 1 },
+
+  pointsStrong: { fontSize: 14, fontWeight: "900", textAlign: "left" },
+
+  // Buttons row (shared)
+  sheetRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    alignItems: "center",
+    gap: 10,
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderTopWidth: StyleSheet.hairlineWidth,
+    borderTopColor: "#E5E7EB",
+  },
   sheetBtn: { paddingVertical: 10, paddingHorizontal: 14, borderRadius: 10 },
-  sheetBtnText: { color: "#fff", fontWeight: "700", fontSize: 14 },
+  sheetBtnText: { color: "#fff", fontWeight: "700", fontSize: 14, textAlign: "left" },
   sheetBtnGhost: { paddingVertical: 10, paddingHorizontal: 14, borderRadius: 10, backgroundColor: "transparent" },
-  sheetBtnGhostText: { fontWeight: "700", fontSize: 14 },
+  sheetBtnGhostText: { fontWeight: "700", fontSize: 14, textAlign: "left" },
 
   // (legacy)
-  closeBtn: { backgroundColor: "#d50000", padding: 14, borderRadius: 10, alignItems: "center", margin: 20 },
-  closeText: { color: "#fff", fontWeight: "700", fontSize: 16 },
+  modalCloseBtn: { width: 36, height: 36, borderRadius: 18, alignItems: "center", justifyContent: "center" },
 });
