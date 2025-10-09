@@ -16,8 +16,6 @@ import {
 import { useSharedValue } from "react-native-reanimated";
 import Carousel from "react-native-reanimated-carousel";
 
-import PenaltyModal from "@/components/Game/PenaltyGame"; // adjust path
-
 import { LevelsModal } from "@/components/Levels/LevelsModal";
 import { type ClubKey } from "@/constants/Colors";
 import { useClub, useClubTheme } from "@/hooks/useClubTheme";
@@ -358,7 +356,6 @@ export default function HomePage() {
         onClose={() => setLevelsVisible(false)}
         onDismiss={() => {}}
       />
-       <PenaltyModal visible={penaltyVisible} onClose={() => setPenaltyVisible(false)} />
     </View>
   );
 }
