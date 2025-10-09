@@ -11,8 +11,8 @@ export const usePointsStore = create<PointsStore>((set) => ({
     setPoints: (points) => set({ points }),
 }));
 
-export function useSetPoints(): (points:number) => void {
-    return usePointsStore((s) => s.setPoints);
+export function useSetPoints(): (points: number) => void {
+  return usePointsStore((s) => s.setPoints);
 }
 
 export function usePoints():number {
