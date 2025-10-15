@@ -3,33 +3,34 @@
     "name": "olle",
     "slug": "olle",
     "version": "1.0.0",
+    "scheme": "olle",
     "orientation": "portrait",
     "icon": "./assets/images/olle.png",
-    "scheme": "olle",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
+    "newArchEnabled": false,
     "updates": {
       "enabled": true,
       "fallbackToCacheTimeout": 0
     },
     "ios": {
+      "bundleIdentifier": "com.migolkoanton.olle",
+      "buildNumber": "1.0.4",
       "supportsTablet": true,
       "infoPlist": {
         "CFBundleLocalizations": [
-          "he",
           "he"
         ],
+        "ITSAppUsesNonExemptEncryption": false,
         "ExpoLocalization_supportsRTL": true,
         "ExpoLocalization_forcesRTL": true
-      },
-      "bundleIdentifier": "com.migolkoanton.olle"
+      }
     },
     "android": {
+      "edgeToEdgeEnabled": true,
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/olle.png",
         "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true
+      }
     },
     "web": {
       "bundler": "metro",
@@ -48,7 +49,9 @@
         }
       ],
       "expo-secure-store",
-      "expo-localization"
+      "expo-localization",
+      "expo-font",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true
