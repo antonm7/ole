@@ -16,7 +16,7 @@ import { FriendsModal, type FriendRow } from "./components/FriendsModal";
 import { HomeHeader } from "./components/HomeHeader";
 import { OffersCarouselSection } from "./components/OffersCarouselSection";
 import { PointsCard } from "./components/PointsCard";
-import { TicketsModal } from "./components/TicketsModal";
+import { TicketsModal, type TicketItem } from "./components/TicketsModal";
 import { VoteBanner } from "./components/VoteBanner";
 import { VoteModal } from "./components/VoteModal";
 
@@ -172,8 +172,57 @@ export default function HomePage() {
     return isLightBg ? "#E5E7EB" : "#2F3136";
   };
 
-  // QR payload (placeholder)
-  const qrPayload = `OLLE|${currentClub}|HOME|Hapoel vs Maccabi TA|001`;
+  const tickets = useMemo<TicketItem[]>(() => {
+    if (currentClub === "hapoel-tel-aviv") {
+      return [
+        {
+          id: "match-1",
+          title: "משחק בית נגד מכבי תל אביב",
+          subtitle: "15.12 · 20:30 · אצטדיון בלומפילד",
+          details: ["שער 5 · בלוק 133", "שורה 12 · מושב 7", "כניסה פתוחה משעה 19:30"],
+          qrPayload: "OLLE|HAPOEL|HOME|MTA|001",
+        },
+        {
+          id: "match-2",
+          title: "משחק בית נגד בית\"ר ירושלים",
+          subtitle: "03.01 · 21:00 · אצטדיון בלומפילד",
+          details: ["שער 7 · בלוק 118", "שורה 9 · מושב 14", "כניסה פתוחה משעה 19:45"],
+          qrPayload: "OLLE|HAPOEL|HOME|BEITAR|002",
+        },
+        {
+          id: "match-3",
+          title: "משחק גביע מול מכבי נתניה",
+          subtitle: "18.01 · 19:45 · אצטדיון בלומפילד",
+          details: ["שער 2 · בלוק 204", "שורה 4 · מושב 3", "כניסה פתוחה משעה 18:15"],
+          qrPayload: "OLLE|HAPOEL|CUP|NETANYA|003",
+        },
+      ];
+    }
+
+    return [
+      {
+        id: "match-1",
+        title: "משחק בית נגד הפועל תל אביב",
+        subtitle: "15.12 · 20:30 · אצטדיון סמי עופר",
+        details: ["שער 11 · בלוק 232", "שורה 16 · מושב 9", "כניסה פתוחה משעה 19:15"],
+        qrPayload: "OLLE|MACCABI|HOME|HAPOEL|001",
+      },
+      {
+        id: "match-2",
+        title: "משחק בית נגד בני סכנין",
+        subtitle: "03.01 · 21:00 · אצטדיון סמי עופר",
+        details: ["שער 8 · בלוק 107", "שורה 6 · מושב 5", "כניסה פתוחה משעה 19:40"],
+        qrPayload: "OLLE|MACCABI|HOME|SAKHNIN|002",
+      },
+      {
+        id: "match-3",
+        title: "משחק גביע מול הפועל באר שבע",
+        subtitle: "18.01 · 19:45 · אצטדיון סמי עופר",
+        details: ["שער 4 · בלוק 316", "שורה 10 · מושב 12", "כניסה פתוחה משעה 18:10"],
+        qrPayload: "OLLE|MACCABI|CUP|BEERSHEVA|003",
+      },
+    ];
+  }, [currentClub]);
 
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
@@ -273,7 +322,7 @@ export default function HomePage() {
         onClose={() => setTicketsVisible(false)}
         isLightBg={isLightBg}
         theme={theme}
-        qrPayload={qrPayload}
+        tickets={tickets}
       />
     </View>
   );
