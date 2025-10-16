@@ -194,7 +194,7 @@ export default function HomePage() {
         <LinearGradient colors={theme.headerGradient} style={StyleSheet.absoluteFill} />
         <SafeAreaView style={styles.innerHeaderContainer}>
           <View>
-            <Text style={[styles.greeting, { color: theme.onPrimary }]}>שלום אנטון</Text>
+            <Text style={[styles.greeting, { color: theme.onPrimary }]}>שלום עידו ניצני</Text>
             <Text style={[styles.subtitle, { color: theme.onPrimary }]}>
               {currentClub === "hapoel-tel-aviv" ? "אוהד הפועל תל אביב" : "אוהד מכבי חיפה"}
             </Text>
