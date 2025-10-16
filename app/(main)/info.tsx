@@ -35,7 +35,7 @@ export default function PointsInfoScreen() {
                 width: 104,
                 height: 104,
                 borderRadius: 52,
-                backgroundColor: "#ffffff18",
+                backgroundColor: "white",
                 borderWidth: 1,
                 borderColor: "#ffffff55",
                 overflow: "hidden",
