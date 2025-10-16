@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
+import QRCode from "react-native-qrcode-svg";
 import { useSharedValue } from "react-native-reanimated";
 import Carousel from "react-native-reanimated-carousel";
 
@@ -52,6 +53,9 @@ export default function HomePage() {
 
   // friends modal state
   const [friendsVisible, setFriendsVisible] = useState(false);
+
+  // NEW — tickets modal state
+  const [ticketsVisible, setTicketsVisible] = useState(false);
 
   const { current, next, progress, toNext } = getProgress(points);
 
@@ -177,6 +181,9 @@ export default function HomePage() {
     return isLightBg ? "#E5E7EB" : "#2F3136";
   };
 
+  // QR payload (placeholder)
+  const qrPayload = `OLLE|${currentClub}|HOME|Hapoel vs Maccabi TA|001`;
+
   return (
     <View style={[styles.container, { backgroundColor: theme.background }]}>
       {/* Header */}
@@ -198,7 +205,7 @@ export default function HomePage() {
 
       <Animated.ScrollView
         style={styles.scroller}
-        contentContainerStyle={{ paddingBottom: 120 }}
+        contentContainerStyle={{ paddingBottom: 140 }}
         scrollEventThrottle={16}
         onScroll={Animated.event([{ nativeEvent: { contentOffset: { y } } }], { useNativeDriver: true })}
       >
@@ -282,8 +289,33 @@ export default function HomePage() {
           />
         </View>
 
-        {/* Friends feature tile */}
+        {/* ===== NEW: Tickets button (same look as friends), placed ABOVE friends ===== */}
         <View style={[styles.featureRow]}>
+        <Text style={[styles.offersTitle, { color: theme.text, borderRightColor: theme.primary,marginBottom:18 }]}>מידע נוסף</Text>
+
+          <TouchableOpacity
+            style={[
+              styles.featureFull,
+              { backgroundColor: isLightBg ? "#F9FAFB" : "#2A2A2D", borderColor: isLightBg ? "#E5E7EB" : "#3A3A3D" },
+            ]}
+            onPress={() => setTicketsVisible(true)}
+            activeOpacity={0.9}
+          >
+            <MaterialIcons
+              name="confirmation-number"
+              size={110}
+              color={isLightBg ? "#C9CDD2" : "#3A3A3D"}
+              style={styles.backgroundIconCompact}
+            />
+            <View style={styles.featureContent}>
+              <Text style={[styles.featureTitle, { color: isLightBg ? "#111827" : "#F9FAFB" }]}>הכרטיסים שלי</Text>
+              <Text style={[styles.featureCTA, { color: isLightBg ? "#374151" : "#D1D5DB" }]}>לצפייה {">"}</Text>
+            </View>
+          </TouchableOpacity>
+        </View>
+
+        {/* Friends feature tile (unchanged) */}
+        <View style={[styles.featureRow, { marginTop: SECTION_GAP }]}>
           <TouchableOpacity
             style={[
               styles.featureFull,
@@ -437,6 +469,58 @@ export default function HomePage() {
           </View>
         </View>
       </Modal>
+
+      {/* NEW — Tickets Modal */}
+      <Modal
+        visible={ticketsVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setTicketsVisible(false)}
+      >
+        <View style={styles.popupOverlay}>
+          <View
+            style={[
+              styles.ticketsPopup,
+              { backgroundColor: isLightBg ? "#ffffff" : "#1F2226", borderColor: isLightBg ? "#E5E7EB" : "#2A2D31" },
+            ]}
+          >
+            {/* Top row */}
+            <View style={styles.popupTopRow}>
+              <Text style={[styles.popupTitle, { color: isLightBg ? "#0F172A" : "#E5E7EB" }]}>הכרטיסים שלי</Text>
+              <TouchableOpacity
+                onPress={() => setTicketsVisible(false)}
+                style={[styles.modalCloseBtn, { backgroundColor: isLightBg ? "#EEF2F6" : "#23262B" }]}
+                activeOpacity={0.8}
+              >
+                <MaterialIcons name="close" size={18} color={isLightBg ? "#111827" : "#E5E7EB"} />
+              </TouchableOpacity>
+            </View>
+
+            {/* Title */}
+            <View style={styles.ticketHeader}>
+              <Text style={[styles.ticketTitle, { color: theme.text }]}>משחק בית נגד מכבי תל אביב</Text>
+            </View>
+
+            {/* QR center */}
+            <View style={styles.qrWrap}>
+              <View style={[styles.qrCard, { backgroundColor: isLightBg ? "#F8FAFC" : "#15181C", borderColor: isLightBg ? "#E5E7EB" : "#2A2D31" }]}>
+                <QRCode value={qrPayload} size={180} backgroundColor="transparent" />
+              </View>
+              <Text style={[styles.qrHint, { color: isLightBg ? "#64748B" : "#94A3B8" }]}>הציגו את ה-QR בשער הכניסה</Text>
+            </View>
+
+            {/* Footer actions */}
+            <View style={styles.sheetRow}>
+              <TouchableOpacity style={styles.sheetBtnGhost} onPress={() => setTicketsVisible(false)}>
+                <Text style={[styles.sheetBtnGhostText, { color: theme.primary }]}>סגור</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[styles.sheetBtn, { backgroundColor: theme.primary }]} onPress={() => { /* no-op for now */ }}>
+                <Text style={styles.sheetBtnText}>מכירה</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -504,7 +588,7 @@ const styles = StyleSheet.create({
   offers: { paddingHorizontal: 16, paddingVertical: SECTION_GAP },
   offersTitle: { fontSize: 16, fontWeight: "600", marginBottom: 8, textAlign: "left", borderRightWidth: 4, paddingHorizontal: 12 },
 
-  // Friends feature tile
+  // Friends feature tile + Tickets feature tile share these styles
   featureRow: { paddingHorizontal: 16 },
   featureFull: {
     width: "100%",
@@ -619,4 +703,70 @@ const styles = StyleSheet.create({
 
   // (legacy)
   modalCloseBtn: { width: 36, height: 36, borderRadius: 18, alignItems: "center", justifyContent: "center" },
+
+  /* =========================
+     Bottom "הכרטיסים שלי"
+     ========================= */
+  bottomBoxWrap: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 12,
+    paddingHorizontal: 16,
+  },
+  bottomBoxCard: {
+    borderRadius: 16,
+    overflow: "hidden",
+    borderWidth: 1,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 3 },
+  },
+  bottomGradient: {
+    ...StyleSheet.absoluteFillObject,
+    opacity: 0.26, // tinted surface
+  },
+  bottomBoxContent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+  },
+  bottomIconWrap: {
+    width: 34,
+    height: 34,
+    borderRadius: 10,
+    backgroundColor: "#F8FAFC",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  bottomTitle: {
+    flex: 1,
+    fontSize: 16,
+    fontWeight: "800",
+    color: "#0B1020",
+    textAlign: "left",
+  },
+
+  /* =========================
+     Tickets Modal
+     ========================= */
+  ticketsPopup: {
+    width: width * 0.92,
+    minHeight: Math.min(360, height * 0.55),
+    borderRadius: 18,
+    borderWidth: 1,
+    overflow: "hidden",
+  },
+  ticketHeader: { paddingHorizontal: 16, paddingTop: 12 },
+  ticketTitle: { fontSize: 16, fontWeight: "800", textAlign: "left" },
+  qrWrap: { alignItems: "center", paddingHorizontal: 16, paddingVertical: 18, gap: 10 },
+  qrCard: {
+    padding: 18,
+    borderRadius: 16,
+    borderWidth: 1,
+  },
+  qrHint: { fontSize: 12, textAlign: "left" },
 });
