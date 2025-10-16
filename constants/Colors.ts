@@ -1,4 +1,3 @@
-// /constants/Colors.ts
 export type ModeKey = "light" | "dark";
 export type ClubKey = "hapoel-tel-aviv" | "maccabi-haifa";
 
@@ -19,20 +18,21 @@ const globalBase = {
   },
 } as const;
 
+// Tuned to ole_bg: deep burgundy + warm gold
 export const GlobalColors = {
   light: {
     ...globalBase.light,
-    primary: "#0F62FE",
-    onPrimary: "#FFFFFF",
-    globalButton: "#0A0A0A",
-    tint: "#0F62FE",
-    tabIconSelected: "#0F62FE",
+    primary: "#A21D26",       // burgundy accent
+    onPrimary: "#A52222",
+    globalButton: "#FFC36A",  // warm gold (main CTA)
+    tint: "#A21D26",
+    tabIconSelected: "#A21D26",
   },
   dark: {
     ...globalBase.dark,
-    primary: "#4C8DFF",
-    onPrimary: "#0A0A0A",
-    globalButton: "#4C8DFF",
+    primary: "#B1242E",       // slightly brighter for dark surfaces
+    onPrimary: "#0A0A0A",     // black text on gold for contrast
+    globalButton: "#FFC36A",  // same gold in dark
     tint: "#FFFFFF",
     tabIconSelected: "#FFFFFF",
   },

@@ -7,17 +7,27 @@ function maskCard(num: string) {
   return base.slice(0, 19);
 }
 
+/** Brand-aligned palette (Olé) */
+const PAL = {
+  bg1: "#4C0F12",          // deep burgundy
+  bg2: "#1D0708",          // darker burgundy
+  textMain: "#F3F0E9",     // soft warm white
+  textSub: "rgba(243,240,233,0.85)",
+  digits: "#EFE9DC",       // warmer digits
+  contact1: "rgba(255,195,106,0.80)", // gold strokes
+  contact2: "rgba(255,195,106,0.55)",
+  contact3: "rgba(255,195,106,0.30)",
+  chipMain: "#E7C77B",     // warm gold chip
+  chipStripe: "#C2A657",
+};
+
 export function CreditCardPreview({ number }: { number: string }) {
   const display = maskCard(number || "5000 1234 5678 9010");
 
-  // screen width
   const { width } = Dimensions.get("window");
-  // card width = ~90% of screen
-  const cardWidth = width * 0.8;
-  // standard credit card ratio ~1.586:1 (width:height)
+  const cardWidth = width * 0.6;    // ~70% width looks balanced when floating
   const cardHeight = cardWidth / 1.7;
 
-  // App is Hebrew-only (fixed RTL)
   const RTL = true || I18nManager.isRTL;
 
   return (
@@ -35,9 +45,9 @@ export function CreditCardPreview({ number }: { number: string }) {
         elevation: 6,
       }}
     >
-      {/* Card surface */}
+      {/* Surface: subtle diagonal burgundy gradient */}
       <LinearGradient
-        colors={["#0D0E10", "#1A1C1E"]}
+        colors={[PAL.bg1, PAL.bg2]}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 1 }}
         style={{
@@ -46,7 +56,7 @@ export function CreditCardPreview({ number }: { number: string }) {
           justifyContent: "space-between",
         }}
       >
-        {/* Top row (brand on the right, contactless on the left) */}
+        {/* Top row */}
         <View
           style={{
             flexDirection: RTL ? "row-reverse" : "row",
@@ -63,7 +73,7 @@ export function CreditCardPreview({ number }: { number: string }) {
             >
               <Text
                 style={{
-                  color: "#EDEEF0",
+                  color: PAL.textMain,
                   fontSize: cardWidth * 0.06,
                   fontWeight: "900",
                   textTransform: "lowercase",
@@ -75,10 +85,9 @@ export function CreditCardPreview({ number }: { number: string }) {
               </Text>
               <Text
                 style={{
-                  color: "#EDEEF0",
-                  fontSize: cardWidth * 0.06,
+                  color: PAL.textSub,
+                  fontSize: cardWidth * 0.058,
                   fontWeight: "400",
-                  // swap margins for RTL
                   marginRight: RTL ? 6 : 0,
                   marginLeft: RTL ? 0 : 6,
                   textAlign: RTL ? "right" : "left",
@@ -90,34 +99,28 @@ export function CreditCardPreview({ number }: { number: string }) {
             </View>
           </View>
 
-          {/* Contactless (left side in RTL) */}
+          {/* Contactless (left in RTL) */}
           <Svg width={cardWidth * 0.07} height={cardWidth * 0.07} viewBox="0 0 26 26">
-            <Path d="M8 6c3 3 3 11 0 14" stroke="rgba(255,255,255,0.75)" strokeWidth={1.6} fill="none" />
-            <Path d="M13 4c4 4 4 14 0 18" stroke="rgba(255,255,255,0.5)" strokeWidth={1.6} fill="none" />
-            <Path d="M18 2c5 5 5 18 0 23" stroke="rgba(255,255,255,0.25)" strokeWidth={1.6} fill="none" />
+            <Path d="M8 6c3 3 3 11 0 14" stroke={PAL.contact1} strokeWidth={1.6} fill="none" />
+            <Path d="M13 4c4 4 4 14 0 18" stroke={PAL.contact2} strokeWidth={1.6} fill="none" />
+            <Path d="M18 2c5 5 5 18 0 23" stroke={PAL.contact3} strokeWidth={1.6} fill="none" />
           </Svg>
         </View>
 
         {/* Chip */}
-        <View
-          style={{
-            alignItems: 'flex-start',
-            marginBottom:12,
-            marginTop:6
-          }}
-        >
-          <Svg width={cardWidth * 0.16} height={cardHeight * 0.2} viewBox="0 0 56 40" style={{ opacity: 0.9 }}>
-            <Rect x="0" y="0" width="56" height="40" rx="8" fill="#D9C173" />
-            <Rect x="8" y="9" width="40" height="4" rx="2" fill="#B39B52" />
-            <Rect x="8" y="17" width="40" height="4" rx="2" fill="#B39B52" />
-            <Rect x="8" y="25" width="40" height="4" rx="2" fill="#B39B52" />
+        <View style={{ alignItems: 'flex-start', marginBottom: 12, marginTop: 6 }}>
+          <Svg width={cardWidth * 0.16} height={cardHeight * 0.2} viewBox="0 0 56 40" style={{ opacity: 0.95 }}>
+            <Rect x="0" y="0" width="56" height="40" rx="8" fill={PAL.chipMain} />
+            <Rect x="8" y="9" width="40" height="4" rx="2" fill={PAL.chipStripe} />
+            <Rect x="8" y="17" width="40" height="4" rx="2" fill={PAL.chipStripe} />
+            <Rect x="8" y="25" width="40" height="4" rx="2" fill={PAL.chipStripe} />
           </Svg>
         </View>
 
-        {/* Card Number */}
+        {/* Number */}
         <Text
           style={{
-            color: "#C7C9CC",
+            color: PAL.digits,
             fontSize: cardWidth * 0.055,
             letterSpacing: 3,
             fontVariant: ["tabular-nums"],
@@ -128,13 +131,13 @@ export function CreditCardPreview({ number }: { number: string }) {
           {display}
         </Text>
 
-        {/* Bottom row (expiry on the right, Mastercard on the left) */}
+        {/* Bottom row */}
         <View
           style={{
             flexDirection: RTL ? "row-reverse" : "row",
             justifyContent: "space-between",
             alignItems: "center",
-            marginTop:12,
+            marginTop: 12,
           }}
         >
           <View
@@ -145,7 +148,7 @@ export function CreditCardPreview({ number }: { number: string }) {
           >
             <Text
               style={{
-                color: "#EDEEF0",
+                color: PAL.textMain,
                 fontSize: cardWidth * 0.04,
                 fontWeight: "700",
                 textAlign: RTL ? "right" : "left",
@@ -156,8 +159,8 @@ export function CreditCardPreview({ number }: { number: string }) {
             </Text>
           </View>
 
-          {/* Mastercard (left side in RTL) */}
-          <Svg style={{marginLeft:-10}} width={cardWidth * 0.2} height={cardHeight * 0.25} viewBox="0 0 54 36">
+          {/* Mastercard (left in RTL) – keep original brand colors for recognizability */}
+          <Svg style={{ marginLeft: -10 }} width={cardWidth * 0.2} height={cardHeight * 0.25} viewBox="0 0 54 36">
             <Circle cx="22" cy="18" r="12" fill="#EB001B" />
             <Circle cx="32" cy="18" r="12" fill="#F79E1B" />
           </Svg>
