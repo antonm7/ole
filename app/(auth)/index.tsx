@@ -143,16 +143,19 @@ export default function SignInScreen() {
     return { height: h, borderBottomLeftRadius: radius, borderBottomRightRadius: radius };
   });
 
-  // Compute a delta so the group lands *inside* the final hero nicely.
-  // Initial anchor is top: '35%' of the screen; final target ~42% of FINAL_H.
-  const initialAnchorY = SCREEN_H * 0.22;
-  const finalAnchorY   = FINAL_H * 0.60;
+  const initialAnchorY = SCREEN_H * 0.30;
+  const finalAnchorY   = FINAL_H * 0.75;  // was 0.60 → lower final position
   const translateDelta = -(initialAnchorY - finalAnchorY);
 
   // Group (big logo + tagline) moves by that delta and settles slightly smaller
   const groupTranslateY = useAnimatedStyle(() => {
     const ty = interpolate(logoIntroUp.value, [0, 1], [0, translateDelta], Extrapolate.CLAMP);
-    const settleScale = interpolate(progress.value, [0, 1], [1, 0.92]); // a touch smaller
+    const settleScale = interpolate(
+      progress.value,
+      [0, 0.55, 1],
+      [1, 1, 0.7],
+      Extrapolate.CLAMP
+    ); // hold size, then shrink in the second phase
     return { transform: [{ translateY: ty }, { scale: settleScale }] };
   });
 
@@ -294,7 +297,7 @@ const styles = StyleSheet.create({
   },
   groupWrap: {
     position: 'absolute',
-    top: '7%',
+    top: '26%', // was '7%' — move closer to vertical center
     alignSelf: 'center',
     alignItems: 'center',
     gap: 6,
