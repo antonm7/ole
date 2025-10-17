@@ -17,7 +17,6 @@
     <key>CFBundleLocalizations</key>
     <array>
       <string>he</string>
-      <string>he</string>
     </array>
     <key>CFBundleName</key>
     <string>$(PRODUCT_NAME)</string>
@@ -49,6 +48,8 @@
     <true/>
     <key>ExpoLocalization_supportsRTL</key>
     <true/>
+    <key>ITSAppUsesNonExemptEncryption</key>
+    <false/>
     <key>LSMinimumSystemVersion</key>
     <string>12.0</string>
     <key>LSRequiresIPhoneOS</key>

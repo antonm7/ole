@@ -12,7 +12,7 @@
     "orientation": "portrait",
     "icon": "./assets/images/olle2.png",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": false,
+    "newArchEnabled": true,
     "updates": {
       "enabled": true,
       "fallbackToCacheTimeout": 0
@@ -40,7 +40,8 @@
         "backgroundColor": "#05004C",
         "resizeMode": "contain",
         "image": "./assets/images/slpash.png"
-      }
+      },
+      "package": "com.migolkoanton.olle"
     },
     "web": {
       "bundler": "metro",
