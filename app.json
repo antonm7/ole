@@ -5,7 +5,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "cover",
-      "backgroundColor": "#05004C"
+      "backgroundColor": "#8B0000"
     },
     "version": "1.0.0",
     "scheme": "olle",
@@ -37,7 +37,7 @@
         "backgroundColor": "#ffffff"
       },
       "splash": {
-        "backgroundColor": "#05004C",
+        "backgroundColor": "#8B0000",
         "resizeMode": "cover",
         "image": "./assets/images/slpash.png"
       },
@@ -55,7 +55,7 @@
         {
           "image": "./assets/images/splash.png",
           "resizeMode": "cover",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#8B0000"
         }
       ],
       "expo-secure-store",
