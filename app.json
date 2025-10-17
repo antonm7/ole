@@ -2,10 +2,15 @@
   "expo": {
     "name": "olle",
     "slug": "olle",
+    "splash":{
+      "image": "./assets/images/splash.png",
+      "resizeMode": "cover", 
+      "backgroundColor": "#05004C"
+    },
     "version": "1.0.0",
     "scheme": "olle",
     "orientation": "portrait",
-    "icon": "./assets/images/olle.png",
+    "icon": "./assets/images/olle2.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": false,
     "updates": {
@@ -28,22 +33,26 @@
     "android": {
       "edgeToEdgeEnabled": true,
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/olle.png",
+        "foregroundImage": "./assets/images/olle2.png",
         "backgroundColor": "#ffffff"
+      },
+      "splash": {
+        "backgroundColor": "#05004C",    
+        "resizeMode": "contain",
+        "image": "./assets/images/slpash.png"
       }
     },
     "web": {
       "bundler": "metro",
       "output": "static",
-      "favicon": "./assets/images/olle.png"
+      "favicon": "./assets/images/olle2.png"
     },
     "plugins": [
       "expo-router",
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/olle.png",
-          "imageWidth": 200,
+          "image": "./assets/images/splash.png",
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"
         }
