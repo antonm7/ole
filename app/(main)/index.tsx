@@ -11,14 +11,14 @@ import { useClub, useClubTheme } from "@/hooks/useClubTheme";
 import { usePoints, useSetPoints } from "@/hooks/usePoints";
 import { getProgress } from "@/lib/tiers";
 
-import { FeatureTile } from "./components/FeatureTile";
-import { FriendsModal, type FriendRow } from "./components/FriendsModal";
-import { HomeHeader } from "./components/HomeHeader";
-import { OffersCarouselSection } from "./components/OffersCarouselSection";
-import { PointsCard } from "./components/PointsCard";
-import { TicketsModal, type TicketItem } from "./components/TicketsModal";
-import { VoteBanner } from "./components/VoteBanner";
-import { VoteModal } from "./components/VoteModal";
+import { FeatureTile } from "../../components/components/FeatureTile";
+import { FriendsModal, type FriendRow } from "../../components/components/FriendsModal";
+import { HomeHeader } from "../../components/components/HomeHeader";
+import { OffersCarouselSection } from "../../components/components/OffersCarouselSection";
+import { PointsCard } from "../../components/components/PointsCard";
+import { TicketsModal, type TicketItem } from "../../components/components/TicketsModal";
+import { VoteBanner } from "../../components/components/VoteBanner";
+import { VoteModal } from "../../components/components/VoteModal";
 
 const HEADER_HEIGHT = 200;
 const { width } = Dimensions.get("window");

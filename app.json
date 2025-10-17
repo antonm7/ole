@@ -19,7 +19,7 @@
     },
     "ios": {
       "bundleIdentifier": "com.migolkoanton.olle",
-      "buildNumber": "1.0.6",
+      "buildNumber": "1.0.8",
       "supportsTablet": true,
       "infoPlist": {
         "CFBundleLocalizations": [
@@ -38,7 +38,7 @@
       },
       "splash": {
         "backgroundColor": "#05004C",
-        "resizeMode": "contain",
+        "resizeMode": "cover",
         "image": "./assets/images/slpash.png"
       },
       "package": "com.migolkoanton.olle"
@@ -54,7 +54,7 @@
         "expo-splash-screen",
         {
           "image": "./assets/images/splash.png",
-          "resizeMode": "contain",
+          "resizeMode": "cover",
           "backgroundColor": "#ffffff"
         }
       ],
