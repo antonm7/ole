@@ -2,9 +2,9 @@
   "expo": {
     "name": "olle",
     "slug": "olle",
-    "splash":{
+    "splash": {
       "image": "./assets/images/splash.png",
-      "resizeMode": "cover", 
+      "resizeMode": "cover",
       "backgroundColor": "#05004C"
     },
     "version": "1.0.0",
@@ -19,7 +19,7 @@
     },
     "ios": {
       "bundleIdentifier": "com.migolkoanton.olle",
-      "buildNumber": "1.0.5",
+      "buildNumber": "1.0.6",
       "supportsTablet": true,
       "infoPlist": {
         "CFBundleLocalizations": [
@@ -37,7 +37,7 @@
         "backgroundColor": "#ffffff"
       },
       "splash": {
-        "backgroundColor": "#05004C",    
+        "backgroundColor": "#05004C",
         "resizeMode": "contain",
         "image": "./assets/images/slpash.png"
       }
