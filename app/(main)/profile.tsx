@@ -22,6 +22,7 @@ import {
 
 import { useClubTheme } from "@/hooks/useClubTheme";
 import { usePoints } from "@/hooks/usePoints";
+import { router } from "expo-router";
 
 /* ---------- types ---------- */
 type PointsEvent = {
@@ -215,6 +216,13 @@ export default function ProfilePage() {
     setStep("done");
   };
 
+  const handleLogout = () => {
+    setShowAll(false);
+    setChangeOpen(false);
+    resetFlow();
+    router.replace("/(auth)");
+  }
+
   /* ---------- renderers ---------- */
   const renderHistoryItem = ({ item }: { item: PointsEvent }) => {
     const positive = item.amount >= 0;
@@ -272,7 +280,7 @@ export default function ProfilePage() {
       <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined} style={{ flex: 1 }}>
         {/* Tap anywhere outside inputs to dismiss keyboard */}
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-          <ScrollView contentContainerStyle={{ paddingBottom: 160 }} keyboardShouldPersistTaps="handled">
+          <ScrollView contentContainerStyle={{ paddingBottom: 80 }} keyboardShouldPersistTaps="handled">
             {/* ===== Smaller Greeting (no avatar, no points) ===== */}
             <View style={styles.headerWrap}>
               <LinearGradient colors={greetingColors} style={styles.greetCard}>
@@ -289,7 +297,7 @@ export default function ProfilePage() {
             {/* ===== History preview (latest 5) ===== */}
             <View style={styles.sectionRow}>
               <Text style={[styles.sectionTitle, { color: isLightBg ? "#0F172A" : "#E5E7EB" }]}>
-                היסטוריית נקודות
+                היסטוריית צבירת נקודות
               </Text>
               <TouchableOpacity onPress={openAll} activeOpacity={0.8} style={styles.linkBtn}>
                 <Text style={[styles.linkText, { color: theme.primary }]}>הצג הכול</Text>
@@ -333,6 +341,23 @@ export default function ProfilePage() {
                   <Text style={styles.changeBtnText}>החלף כרטיס</Text>
                 </TouchableOpacity>
               </View>
+            </View>
+
+            <View style={styles.logoutWrap}>
+              <TouchableOpacity
+                activeOpacity={0.85}
+                onPress={handleLogout}
+                style={[
+                  styles.logoutBtn,
+                  {
+                    borderColor: theme.primary,
+                    backgroundColor: isLightBg ? "#FFFFFF" : "#111317",
+                  },
+                ]}
+              >
+                <MaterialIcons name="logout" size={18} color={theme.primary} />
+                <Text style={[styles.logoutText, { color: theme.primary }]}>התנתקות</Text>
+              </TouchableOpacity>
             </View>
           </ScrollView>
         </TouchableWithoutFeedback>
@@ -712,6 +737,18 @@ const styles = StyleSheet.create({
     paddingVertical: 14,
     marginTop: 12,               // ↓ reduced so it's closer to history
   },
+  logoutWrap: { paddingHorizontal: 16, marginTop: 16 },
+  logoutBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    borderWidth: 1,
+    borderRadius: 12,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  logoutText: { fontSize: 13, fontWeight: "700", textAlign: "left" },
   activeCardRow: { flexDirection: "row", alignItems: "center", gap: 12 },
   activeLabel: { fontSize: 12, textAlign: "left" },
   activeValue: { fontSize: 16, fontWeight: "800", textAlign: "left" },
