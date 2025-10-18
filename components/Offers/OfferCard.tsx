@@ -1,12 +1,6 @@
 import { useClubTheme } from "@/hooks/useClubTheme";
 import { Ionicons } from "@expo/vector-icons";
-import {
-  Image,
-  ImageSourcePropType,
-  StyleSheet,
-  Text,
-  View,
-} from "react-native";
+import { Image, ImageSourcePropType, StyleSheet, Text, View } from "react-native";
 import { TapGestureHandler } from "react-native-gesture-handler";
 
 export type Offer = {
