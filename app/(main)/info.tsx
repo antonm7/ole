@@ -1,7 +1,7 @@
 // app/.../PointsInfoScreen.tsx
 import { useClubTheme } from "@/hooks/useClubTheme";
 import { LinearGradient } from "expo-linear-gradient";
-import { Image, SafeAreaView, ScrollView, Text, View } from "react-native";
+import { Image, ScrollView, Text, View } from "react-native";
 import pointsSections from "../../assets/text/points";
 
 
@@ -9,7 +9,7 @@ export default function PointsInfoScreen() {
     const theme = useClubTheme();
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: theme.background  }}>
+    <View style={{ flex: 1, backgroundColor: theme.background  }}>
       <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
         {/* Header */}
         <LinearGradient
@@ -17,7 +17,7 @@ export default function PointsInfoScreen() {
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={{
-            paddingTop: 24,
+            paddingTop: 56,
             paddingBottom: 32,
             paddingHorizontal: 20,
             borderBottomLeftRadius: 18,
@@ -82,7 +82,7 @@ export default function PointsInfoScreen() {
           ))}
         </View>
       </ScrollView>
-    </SafeAreaView>
+    </View>
   );
 }
 
