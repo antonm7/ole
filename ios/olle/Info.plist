@@ -17,6 +17,7 @@
     <key>CFBundleLocalizations</key>
     <array>
       <string>he</string>
+      <string>he</string>
     </array>
     <key>CFBundleName</key>
     <string>$(PRODUCT_NAME)</string>
@@ -43,7 +44,7 @@
       </dict>
     </array>
     <key>CFBundleVersion</key>
-    <string>1.0.8</string>
+    <string>1.0.9</string>
     <key>ExpoLocalization_forcesRTL</key>
     <true/>
     <key>ExpoLocalization_supportsRTL</key>

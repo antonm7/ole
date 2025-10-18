@@ -5,7 +5,7 @@
     "splash": {
       "image": "./assets/images/splash.png",
       "resizeMode": "cover",
-      "backgroundColor": "#8B0000"
+      "backgroundColor": "#5f0909"
     },
     "version": "1.0.0",
     "scheme": "olle",
@@ -15,14 +15,16 @@
     "newArchEnabled": true,
     "updates": {
       "enabled": true,
-      "fallbackToCacheTimeout": 0
+      "fallbackToCacheTimeout": 0,
+      "url": "https://u.expo.dev/9cb1482a-cbc7-45dc-bba1-52f60d64537f"
     },
     "ios": {
       "bundleIdentifier": "com.migolkoanton.olle",
-      "buildNumber": "1.0.8",
+      "buildNumber": "1.0.9",
       "supportsTablet": true,
       "infoPlist": {
         "CFBundleLocalizations": [
+          "he",
           "he"
         ],
         "ITSAppUsesNonExemptEncryption": false,
@@ -37,9 +39,9 @@
         "backgroundColor": "#ffffff"
       },
       "splash": {
-        "backgroundColor": "#8B0000",
+        "backgroundColor": "#5f0909",
         "resizeMode": "cover",
-        "image": "./assets/images/slpash.png"
+        "image": "./assets/images/splash.png"
       },
       "package": "com.migolkoanton.olle"
     },
@@ -55,7 +57,7 @@
         {
           "image": "./assets/images/splash.png",
           "resizeMode": "cover",
-          "backgroundColor": "#8B0000"
+          "backgroundColor": "#5f0909"
         }
       ],
       "expo-secure-store",
@@ -77,6 +79,7 @@
         "projectId": "9cb1482a-cbc7-45dc-bba1-52f60d64537f"
       }
     },
-    "owner": "migolkoanton"
+    "owner": "migolkoanton",
+    "runtimeVersion": "1.0.0"
   }
 }
