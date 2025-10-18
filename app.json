@@ -20,7 +20,7 @@
     },
     "ios": {
       "bundleIdentifier": "com.migolkoanton.olle",
-      "buildNumber": "1.0.9",
+      "buildNumber": "1.0.10",
       "supportsTablet": true,
       "infoPlist": {
         "CFBundleLocalizations": [
