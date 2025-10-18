@@ -3,7 +3,7 @@
     "name": "olle",
     "slug": "olle",
     "splash": {
-      "image": "./assets/images/splash.png",
+      "image": "./assets/images/splash.jpeg",
       "resizeMode": "cover",
       "backgroundColor": "#5f0909"
     },
@@ -41,7 +41,7 @@
       "splash": {
         "backgroundColor": "#5f0909",
         "resizeMode": "cover",
-        "image": "./assets/images/splash.png"
+        "image": "./assets/images/splash.jpeg"
       },
       "package": "com.migolkoanton.olle"
     },
@@ -55,7 +55,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash.png",
+          "image": "./assets/images/splash.jpeg",
           "resizeMode": "cover",
           "backgroundColor": "#5f0909"
         }

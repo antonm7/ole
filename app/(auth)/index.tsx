@@ -360,7 +360,7 @@ const styles = StyleSheet.create({
 
   button: {
     marginTop: 10,
-    borderRadius: 18,
+    borderRadius: 26,
     paddingVertical: 16,
     alignItems: 'center',
     shadowColor: '#000',
