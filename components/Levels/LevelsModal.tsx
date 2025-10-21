@@ -1,3 +1,5 @@
+import { type ClubTheme } from "@/constants/Colors";
+import { useClubTheme } from "@/hooks/useClubTheme";
 import { usePoints, useSetPoints } from "@/hooks/usePoints"; // 👈 import Zustand store
 import { getProgress, TIERS, type Tier } from "@/lib/tiers";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
@@ -25,6 +27,14 @@ export function LevelsModal({
 }) {
   const points = usePoints();
   const setPoints = useSetPoints();
+  const theme = useClubTheme();
+  const isLight = theme.background === "#FFFFFF";
+
+  const sheetBackground = theme.background;
+  const surfaceCard = isLight ? "#FFFFFF" : "#1C1F24";
+  const secondarySurface = isLight ? "#F8FAFC" : "#232832";
+  const dividerColor = isLight ? "rgba(15, 23, 42, 0.1)" : "rgba(148, 163, 184, 0.12)";
+  const handleColor = isLight ? "#E0E0E0" : "#2D3036";
 
   // ✅ single source of truth for tier logic
   const { current, next, progress, toNext } = getProgress(points);
@@ -42,7 +52,7 @@ export function LevelsModal({
       onDismiss={onDismiss}
     >
       {Platform.OS === "ios" ? (
-        <SafeAreaView style={{ flex: 1, paddingTop: 8 }}>
+        <SafeAreaView style={{ flex: 1, paddingTop: 8, backgroundColor: sheetBackground }}>
           {/* drag handle */}
           <View style={{ alignItems: "center", paddingTop: 10, paddingBottom: 6 }}>
             <View
@@ -50,7 +60,7 @@ export function LevelsModal({
                 width: 44,
                 height: 5,
                 borderRadius: 3,
-                backgroundColor: "#E0E0E0",
+                backgroundColor: handleColor,
               }}
             />
           </View>
@@ -68,36 +78,52 @@ export function LevelsModal({
           <ScrollView
             contentContainerStyle={{ paddingBottom: 28, paddingHorizontal: 20 }}
             showsVerticalScrollIndicator={false}
+            style={{ backgroundColor: sheetBackground }}
           >
-            <Header points={points} />
+            <Header points={points} isLight={isLight} theme={theme} />
             <CurrentTierCard
               current={current}
               next={next}
               progress={progress}
               toNext={toNext}
+              isLight={isLight}
             />
 
-            <Text style={styles.sectionTitle}>מהן הדרגות?</Text>
+            <Text style={[styles.sectionTitle, { color: isLight ? "#1E293B" : "#E2E8F0" }]}>
+              מהן הדרגות?
+            </Text>
             <View style={{ gap: 12 }}>
               {TIERS.map((t) => (
-                <TierRow key={t.key} tier={t} highlight={t.key === current.key} />
+                <TierRow
+                  key={t.key}
+                  tier={t}
+                  highlight={t.key === current.key}
+                  isLight={isLight}
+                  surfaceCard={surfaceCard}
+                  dividerColor={dividerColor}
+                  theme={theme}
+                />
               ))}
             </View>
 
             <View style={styles.ctaRow}>
-              <Pressable style={[styles.btn, styles.btnSecondary]} onPress={onClose}>
-                <Text style={[styles.btnText, styles.btnTextSecondary]}>סגור</Text>
+              <Pressable
+                style={[
+                  styles.btn,
+                  { backgroundColor: secondarySurface, borderWidth: 1, borderColor: dividerColor },
+                ]}
+                onPress={onClose}
+              >
+                <Text style={[styles.btnText, { color: isLight ? "#1F2937" : "#E2E8F0" }]}>סגור</Text>
               </Pressable>
               <Pressable
-                style={[styles.btn, styles.btnPrimary]}
+                style={[styles.btn, { backgroundColor: theme.primary }]}
                 onPress={() => {
                   onClose();
                   router.push("/info");
                 }}
               >
-                <Text style={[styles.btnText, styles.btnTextPrimary]}>
-                  איך צוברים נקודות?
-                </Text>
+                <Text style={[styles.btnText, { color: theme.onPrimary }]}>איך צוברים נקודות?</Text>
               </Pressable>
             </View>
           </ScrollView>
@@ -105,35 +131,51 @@ export function LevelsModal({
       ) : (
         // Android bottom sheet style wrapper
         <SafeAreaView style={styles.sheetWrapper}>
-          <View style={styles.sheet}>
+          <View style={[styles.sheet, { backgroundColor: sheetBackground }]}>
             <ScrollView
               contentContainerStyle={{ paddingBottom: 28, paddingHorizontal: 20 }}
+              style={{ backgroundColor: sheetBackground }}
             >
-              <Header points={points} />
+              <Header points={points} isLight={isLight} theme={theme} />
               <CurrentTierCard
                 current={current}
                 next={next}
                 progress={progress}
                 toNext={toNext}
+                isLight={isLight}
               />
 
-              <Text style={styles.sectionTitle}>מהן הדרגות?</Text>
+              <Text style={[styles.sectionTitle, { color: isLight ? "#1E293B" : "#E2E8F0" }]}>
+                מהן הדרגות?
+              </Text>
               <View style={{ gap: 12 }}>
                 {TIERS.map((t) => (
-                  <TierRow key={t.key} tier={t} highlight={t.key === current.key} />
+                  <TierRow
+                    key={t.key}
+                    tier={t}
+                    highlight={t.key === current.key}
+                    isLight={isLight}
+                    surfaceCard={surfaceCard}
+                    dividerColor={dividerColor}
+                    theme={theme}
+                  />
                 ))}
               </View>
 
               <View style={styles.ctaRow}>
-                <Pressable style={[styles.btn, styles.btnSecondary]} onPress={onClose}>
-                  <Text style={[styles.btnText, styles.btnTextSecondary]}>
+                <Pressable
+                  style={[
+                    styles.btn,
+                    { backgroundColor: secondarySurface, borderWidth: 1, borderColor: dividerColor },
+                  ]}
+                  onPress={onClose}
+                >
+                  <Text style={[styles.btnText, { color: isLight ? "#1F2937" : "#E2E8F0" }]}>
                     סגור
                   </Text>
                 </Pressable>
-                <Pressable style={[styles.btn, styles.btnPrimary]} onPress={onClose}>
-                  <Text style={[styles.btnText, styles.btnTextPrimary]}>
-                    איך צוברים נקודות?
-                  </Text>
+                <Pressable style={[styles.btn, { backgroundColor: theme.primary }]} onPress={onClose}>
+                  <Text style={[styles.btnText, { color: theme.onPrimary }]}>איך צוברים נקודות?</Text>
                 </Pressable>
               </View>
             </ScrollView>
@@ -144,16 +186,21 @@ export function LevelsModal({
   );
 }
 
-function Header({ points }: { points: number }) {
+function Header({ points, isLight, theme }: { points: number; isLight: boolean; theme: ClubTheme }) {
+  const titleColor = isLight ? "#1E293B" : "#E2E8F0";
+  const subtitleColor = isLight ? "#4B5563" : "#94A3B8";
+  const pointsColor = isLight ? "#1F2937" : "#CBD5F5";
   return (
     <View style={{ marginBottom: 16 }}>
-      <Text style={styles.title}>דרגות נקודות דיגיטליות</Text>
-      <Text style={styles.subtitle}>
+      <Text style={[styles.title, { color: titleColor }]}>דרגות נקודות דיגיטליות</Text>
+      <Text style={[styles.subtitle, { color: subtitleColor }]}>
         הנקודות נצברות בכל רכישה באשראי. ככל שתצבור יותר — תעלה בדרגות.
       </Text>
-      <Text style={styles.pointsLine}>
+      <Text style={[styles.pointsLine, { color: pointsColor }]}>
         נקודות נוכחיות:{" "}
-        <Text style={styles.pointsStrong}>{points.toLocaleString()}</Text>
+        <Text style={[styles.pointsStrong, { color: theme.primary }]}>
+          {points.toLocaleString()}
+        </Text>
       </Text>
     </View>
   );
@@ -164,11 +211,13 @@ function CurrentTierCard({
   next,
   progress,
   toNext,
+  isLight,
 }: {
   current: Tier;
   next: Tier | null;
   progress: number;
   toNext: number;
+  isLight: boolean;
 }) {
   return (
     <View style={styles.currentCard}>
@@ -182,21 +231,29 @@ function CurrentTierCard({
           <MaterialIcons name={current.icon as any} size={28} color="#212121" />
         </View>
         <View style={{ flex: 1 }}>
-          <Text style={styles.currentTitle}>
+          <Text style={[styles.currentTitle, { color: "#0F172A" }]}>
             הדרגה הנוכחית שלך: {current.name}
           </Text>
           {next ? (
-            <Text style={styles.currentSub}>
+            <Text style={[styles.currentSub, { color: "#111827" }]}>
               עוד {toNext.toLocaleString()} נק׳ ל{next.name}
             </Text>
           ) : (
-            <Text style={styles.currentSub}>הגעת לדרגת יהלום — כל הכבוד!</Text>
+            <Text style={[styles.currentSub, { color: "#111827" }]}>הגעת לדרגת יהלום — כל הכבוד!</Text>
           )}
-          <View style={styles.progressBar}>
+          <View
+            style={[
+              styles.progressBar,
+              { backgroundColor: isLight ? "rgba(255,255,255,0.5)" : "rgba(15, 23, 42, 0.25)" },
+            ]}
+          >
             <View
               style={[
                 styles.progressFill,
-                { width: `${Math.round(progress * 100)}%` },
+                {
+                  width: `${Math.round(progress * 100)}%`,
+                  backgroundColor: isLight ? "rgba(33,33,33,0.9)" : "rgba(15, 23, 42, 0.85)",
+                },
               ]}
             />
           </View>
@@ -206,9 +263,33 @@ function CurrentTierCard({
   );
 }
 
-function TierRow({ tier, highlight }: { tier: Tier; highlight?: boolean }) {
+function TierRow({
+  tier,
+  highlight,
+  isLight,
+  surfaceCard,
+  dividerColor,
+  theme,
+}: {
+  tier: Tier;
+  highlight?: boolean;
+  isLight: boolean;
+  surfaceCard: string;
+  dividerColor: string;
+  theme: ClubTheme;
+}) {
   return (
-    <View style={[styles.tierRow, highlight && styles.tierRowHighlight]}>
+    <View
+      style={[
+        styles.tierRow,
+        {
+          backgroundColor: surfaceCard,
+          borderWidth: 1,
+          borderColor: highlight ? theme.primary : dividerColor,
+        },
+        highlight && styles.tierRowHighlight,
+      ]}
+    >
       <LinearGradient
         colors={[tier.colorFrom, tier.colorTo]}
         start={{ x: 0, y: 0 }}
@@ -218,14 +299,16 @@ function TierRow({ tier, highlight }: { tier: Tier; highlight?: boolean }) {
         <MaterialIcons name={tier.icon as any} size={22} color="#212121" />
       </LinearGradient>
       <View style={{ flex: 1 }}>
-        <Text style={styles.tierTitle}>
+        <Text style={[styles.tierTitle, { color: isLight ? "#1E293B" : "#E2E8F0" }]}>
           דרגת {tier.name} · החל מ־{tier.min.toLocaleString()} נק׳
         </Text>
-        <Text style={styles.tierDescription}>{tier.description}</Text>
+        <Text style={[styles.tierDescription, { color: isLight ? "#475569" : "#94A3B8" }]}>
+          {tier.description}
+        </Text>
         {tier.perks.map((p, i) => (
           <View key={i} style={styles.perkRow}>
-            <MaterialIcons name="check-circle" size={16} color="#4CAF50" />
-            <Text style={styles.perkText}>{p}</Text>
+            <MaterialIcons name="check-circle" size={16} color={isLight ? "#22C55E" : "#4ADE80"} />
+            <Text style={[styles.perkText, { color: isLight ? "#334155" : "#CBD5F5" }]}>{p}</Text>
           </View>
         ))}
       </View>
@@ -237,7 +320,6 @@ const styles = StyleSheet.create({
   // Android wrapper
   sheetWrapper: { flex: 1, justifyContent: "flex-end" },
   sheet: {
-    backgroundColor: "#fff",
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
     paddingTop: 12,
@@ -249,17 +331,15 @@ const styles = StyleSheet.create({
     fontWeight: "800",
     textAlign: "left",
     marginBottom: 6,
-    color: "#111",
   },
   subtitle: {
     fontSize: 14,
-    color: "#555",
     textAlign: "left",
     lineHeight: 20,
     marginBottom: 10,
   },
-  pointsLine: { fontSize: 14, color: "#333", textAlign: "left" },
-  pointsStrong: { fontWeight: "800", color: "#d50000" },
+  pointsLine: { fontSize: 14, textAlign: "left" },
+  pointsStrong: { fontWeight: "800" },
 
   sectionTitle: {
     fontSize: 16,
@@ -267,7 +347,6 @@ const styles = StyleSheet.create({
     textAlign: "left",
     marginTop: 14,
     marginBottom: 8,
-    color: "#222",
   },
 
   currentCard: { borderRadius: 16, overflow: "hidden", marginBottom: 12 },
@@ -288,12 +367,10 @@ const styles = StyleSheet.create({
   currentTitle: {
     fontSize: 16,
     fontWeight: "800",
-    color: "#1A1A1A",
     textAlign: "left",
   },
   currentSub: {
     fontSize: 13,
-    color: "#212121",
     textAlign: "left",
     marginTop: 2,
   },
@@ -301,11 +378,10 @@ const styles = StyleSheet.create({
   progressBar: {
     height: 8,
     borderRadius: 6,
-    backgroundColor: "rgba(255,255,255,0.5)",
     overflow: "hidden",
     marginTop: 8,
   },
-  progressFill: { height: "100%", backgroundColor: "#212121" },
+  progressFill: { height: "100%" },
 
   tierRow: {
     flexDirection: "row-reverse",
@@ -313,7 +389,6 @@ const styles = StyleSheet.create({
     gap: 12,
     padding: 12,
     borderRadius: 12,
-    backgroundColor: "#fff",
     shadowColor: "#000",
     shadowOpacity: 0.06,
     shadowRadius: 6,
@@ -322,7 +397,6 @@ const styles = StyleSheet.create({
   },
   tierRowHighlight: {
     borderWidth: 1.5,
-    borderColor: "#d50000",
   },
   tierIconWrap: {
     width: 40,
@@ -334,14 +408,12 @@ const styles = StyleSheet.create({
   tierTitle: {
     fontSize: 15,
     fontWeight: "700",
-    color: "#222",
     textAlign: "left",
     marginBottom: 6,
   },
 
   tierDescription: {
     fontSize: 13,
-    color: "#666",
     marginBottom: 6,
     textAlign: "left",
   },
@@ -351,7 +423,7 @@ const styles = StyleSheet.create({
     gap: 6,
     marginBottom: 4,
   },
-  perkText: { fontSize: 13, color: "#444", textAlign: "left" },
+  perkText: { fontSize: 13, textAlign: "left" },
 
   ctaRow: { flexDirection: "row", gap: 12, marginTop: 16 },
   btn: {
@@ -361,11 +433,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  btnPrimary: { backgroundColor: "#d50000" },
-  btnSecondary: { backgroundColor: "#f1f1f1" },
   btnText: { fontSize: 16, fontWeight: "700" },
-  btnTextPrimary: { color: "#fff" },
-  btnTextSecondary: { color: "#333" },
 
   // dev invisible buttons for increment/decrement
   devBtnRight: {

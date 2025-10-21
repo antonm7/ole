@@ -25,10 +25,16 @@ export function OfferCard({
 }: OfferCardProps) {
   const offer: Offer = { title, description, expiresAt, points, image };
   const theme = useClubTheme();
+  const isLightBg = theme.background === "#FFFFFF";
+  const cardBackground = isLightBg ? "#EEEDEDA8" : "#1F2229";
+  const cardBorder = isLightBg ? "rgba(148, 163, 184, 0.35)" : "rgba(148, 163, 184, 0.15)";
+  const titleColor = isLightBg ? "#111827" : "#F8FAFC";
+  const descriptionColor = isLightBg ? "#4B5563" : "#CBD5F5";
+  const expiryColor = isLightBg ? "#6B7280" : "#9CA3AF";
 
   return (
     <TapGestureHandler onActivated={() => onPress(offer)}>
-      <View style={styles.card}>
+      <View style={[styles.card, { backgroundColor: cardBackground, borderColor: cardBorder }]}>
         {/* 🔥 Top row */}
         <View style={styles.row}>
           <View style={styles.thumb}>
@@ -39,18 +45,10 @@ export function OfferCard({
           </View>
 
           <View style={styles.content}>
-            <Text
-              style={styles.title}
-              numberOfLines={1}
-              ellipsizeMode="tail"
-            >
+            <Text style={[styles.title, { color: titleColor }]} numberOfLines={1} ellipsizeMode="tail">
               {title}
             </Text>
-            <Text
-              numberOfLines={2}
-              ellipsizeMode="tail"
-              style={styles.desc}
-            >
+            <Text numberOfLines={2} ellipsizeMode="tail" style={[styles.desc, { color: descriptionColor }]}>
               {description}
             </Text>
           </View>
@@ -59,8 +57,8 @@ export function OfferCard({
         {/* 🔥 Bottom row */}
         <View style={styles.bottomRow}>
           <View style={styles.expiryWrap}>
-            <Ionicons name="time-outline" size={16} color="#6B7280" />
-            <Text style={styles.expiryText}>עד {expiresAt}</Text>
+            <Ionicons name="time-outline" size={16} color={expiryColor} />
+            <Text style={[styles.expiryText, { color: expiryColor }]}>עד {expiresAt}</Text>
           </View>
 
           <View style={styles.pointsWrap}>
@@ -81,13 +79,13 @@ const styles = StyleSheet.create({
   card: {
     flex: 1, // 👈 Expand to parent width (HomePage carousel = max width, OffersPage wrapper = fixed width)
     height: CARD_HEIGHT,
-    backgroundColor: "#EEEDEDA8",
     borderRadius: 6,
     padding: 16,
     marginHorizontal: 6,
     marginVertical: 8,
     justifyContent: "space-between",
     overflow: "hidden",
+    borderWidth: 1,
   },
   row: {
     flexDirection: "row",
@@ -115,14 +113,12 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: "700",
-    color: "#111827",
     marginBottom: 4,
     textAlign: "left",
   },
   desc: {
     fontSize: 13,
     lineHeight: 18,
-    color: "#4B5563",
     textAlign: "left",
   },
   bottomRow: {
@@ -138,7 +134,6 @@ const styles = StyleSheet.create({
   },
   expiryText: {
     fontSize: 12,
-    color: "#6B7280",
   },
   pointsWrap: {
     flexDirection: "row-reverse",

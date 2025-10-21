@@ -185,7 +185,15 @@ export default function OffersPage() {
                   contentContainerStyle={{ paddingHorizontal: 12 }}
                   ItemSeparatorComponent={() => <View style={{ width: 12 }} />}
                   renderItem={({ item }) => (
-                    <View style={styles.cardWrapper}>
+                    <View
+                      style={[
+                        styles.cardWrapper,
+                        {
+                          backgroundColor: theme.background,
+                          borderColor: theme.background,
+                        },
+                      ]}
+                    >
                       <OfferCard {...item} onPress={() => openOffer(item)} />
                     </View>
                   )}
@@ -204,7 +212,18 @@ export default function OffersPage() {
                     {cat.title}
                   </Text>
                   {cat.offers.map((item, i) => (
-                    <View key={i} style={[styles.cardWrapper, { marginHorizontal: 16, marginBottom: 16 }]}> 
+                    <View
+                      key={i}
+                      style={[
+                        styles.cardWrapper,
+                        {
+                          marginHorizontal: 16,
+                          marginBottom: 16,
+                          backgroundColor: theme.background,
+                          borderColor: theme.background,
+                        },
+                      ]}
+                    > 
                       <OfferCard {...item} onPress={() => openOffer(item)} />
                     </View>
                   ))}

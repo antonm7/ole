@@ -10,7 +10,6 @@ type TicketOffer = {
   id: string;
   opponent: string;
   opponentShort: string;
-  bannerGradient: readonly [string, string];
   date: string;
   time: string;
   venue: string;
@@ -33,7 +32,6 @@ export default function Market() {
           id: "hta-mta",
           opponent: "מכבי תל אביב",
           opponentShort: "מכבי ת\"א",
-          bannerGradient: ["#273B6A", "#E6B800"],
           date: "שבת · 28.12",
           time: "19:30",
           venue: "אצטדיון בלומפילד",
@@ -46,7 +44,6 @@ export default function Market() {
           id: "hta-ashdod",
           opponent: "מ.ס אשדוד",
           opponentShort: "אשדוד",
-          bannerGradient: ["#F2B950", "#2D7CC5"],
           date: "רביעי · 08.01",
           time: "20:45",
           venue: "אצטדיון בלומפילד",
@@ -59,7 +56,6 @@ export default function Market() {
           id: "hta-beitar",
           opponent: "בית\"ר ירושלים",
           opponentShort: "בית\"ר",
-          bannerGradient: ["#E0C04C", "#2C2C2C"],
           date: "שני · 20.01",
           time: "21:00",
           venue: "אצטדיון בלומפילד",
@@ -72,7 +68,6 @@ export default function Market() {
           id: "hta-haifa-a",
           opponent: "מכבי חיפה",
           opponentShort: "מכבי חיפה",
-          bannerGradient: ["#2E9B64", "#0C3F2B"],
           date: "שבת · 01.02",
           time: "20:30",
           venue: "אצטדיון בלומפילד",
@@ -85,7 +80,6 @@ export default function Market() {
           id: "hta-haifa-b",
           opponent: "מכבי חיפה",
           opponentShort: "מכבי חיפה",
-          bannerGradient: ["#2E9B64", "#0A2E1F"],
           date: "שבת · 01.02",
           time: "20:30",
           venue: "אצטדיון בלומפילד",
@@ -102,7 +96,6 @@ export default function Market() {
         id: "mh-haifa-netanya",
         opponent: "מכבי נתניה",
         opponentShort: "נתניה",
-        bannerGradient: ["#F5C84C", "#1F2E44"],
         date: "ראשון · 29.12",
         time: "20:15",
         venue: "אצטדיון סמי עופר",
@@ -115,7 +108,6 @@ export default function Market() {
         id: "mh-haifa-ashdod",
         opponent: "מ.ס אשדוד",
         opponentShort: "אשדוד",
-        bannerGradient: ["#F2B950", "#2D7CC5"],
         date: "חמישי · 09.01",
         time: "19:45",
         venue: "אצטדיון סמי עופר",
@@ -128,7 +120,6 @@ export default function Market() {
         id: "mh-haifa-beer-sheva",
         opponent: "הפועל באר שבע",
         opponentShort: "באר שבע",
-        bannerGradient: ["#C94454", "#6A2230"],
         date: "שבת · 25.01",
         time: "19:00",
         venue: "אצטדיון סמי עופר",
@@ -141,7 +132,6 @@ export default function Market() {
         id: "mh-haifa-hapoel-a",
         opponent: "הפועל תל אביב",
         opponentShort: "הפועל ת\"א",
-        bannerGradient: ["#D52F26", "#6D1313"],
         date: "שלישי · 04.02",
         time: "21:00",
         venue: "אצטדיון סמי עופר",
@@ -154,7 +144,6 @@ export default function Market() {
         id: "mh-haifa-hapoel-b",
         opponent: "הפועל תל אביב",
         opponentShort: "הפועל ת\"א",
-        bannerGradient: ["#C41F1F", "#3A1010"],
         date: "שלישי · 04.02",
         time: "21:00",
         venue: "אצטדיון סמי עופר",
@@ -443,7 +432,7 @@ export default function Market() {
         ]}
       >
         <LinearGradient
-          colors={item.bannerGradient}
+          colors={[theme.primary, theme.primary]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
           style={styles.ticketBanner}

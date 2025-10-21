@@ -10,7 +10,7 @@ export default function PointsInfoScreen() {
 
   return (
     <View style={{ flex: 1, backgroundColor: theme.background  }}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 80 }}>
+      <ScrollView contentContainerStyle={{ paddingBottom: 90 }}>
         {/* Header */}
         <LinearGradient
           colors={theme.headerGradient}
@@ -91,16 +91,23 @@ function SectionCard({
 }: {
   section: { title: string; body: string[]; icon?: string };
 }) {
-  const isRules = section.title.includes("כמות נקודות");
   const theme = useClubTheme();
+  const isLight = theme.background === "#FFFFFF";
+  const cardBackground = isLight ? theme.secondary : "#1C1F24";
+  const shadowOpacity = isLight ? 0.08 : 0.2;
+  const chipBackground = isLight ? "#fff1f1" : "rgba(213, 47, 38, 0.12)";
+  const bodyTextColor = isLight ? "#2B2B2B" : "#CBD5F5";
+  const dividerColor = isLight ? "#f4f4f6" : "rgba(148, 163, 184, 0.2)";
+  const bulletColor = isLight ? theme.primary : "#F8FAFC";
+
   return (
     <View
       style={{
-        backgroundColor: theme.secondary,
+        backgroundColor: cardBackground,
         borderRadius: 16,
         padding: 16,
         shadowColor: "#000",
-        shadowOpacity: 0.08,
+        shadowOpacity,
         shadowRadius: 12,
         shadowOffset: { width: 0, height: 6 },
         elevation: 2,
@@ -111,7 +118,7 @@ function SectionCard({
         {section.icon ? (
           <View
             style={{
-              backgroundColor: "#fff1f1",
+              backgroundColor: chipBackground,
               borderColor: theme.primary,
               borderWidth: 1,
               paddingHorizontal: 8,
@@ -141,12 +148,12 @@ function SectionCard({
       <View style={{ gap: 6 }}>
         {section.body.map((line, j) => (
           <View key={j} style={{ flexDirection: "row", gap: 6, alignItems: "flex-start" }}>
-            <Text style={{ color: theme.primary, marginTop: 3 }}>•</Text>
+            <Text style={{ color: bulletColor, marginTop: 3 }}>•</Text>
             <Text
               style={{
                 fontSize: 15,
                 lineHeight: 22,
-                color: "#2b2b2b",
+                color: bodyTextColor,
                 textAlign: "left",
                 flex: 1,
               }}
@@ -161,7 +168,7 @@ function SectionCard({
       <View
         style={{
           height: 3,
-          backgroundColor: "#f4f4f6",
+          backgroundColor: dividerColor,
           marginTop: 14,
           borderRadius: 999,
         }}

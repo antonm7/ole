@@ -31,6 +31,10 @@ const PointsCardComponent = ({
   theme,
   style,
 }: Props) => {
+  const cardBackground = isLightBg ? "#FFFFFF" : "#1D1F22";
+  const cardTextColor = isLightBg ? theme.text : "#F8FAFC";
+  const progressTrackColor = isLightBg ? "#EEEEEE" : "#2A2D31";
+
   return (
     <TouchableOpacity
       onPress={onPress}
@@ -38,13 +42,13 @@ const PointsCardComponent = ({
         styles.card,
         style,
         {
-          backgroundColor: isLightBg ? "#fff" : "#1d1f22",
+          backgroundColor: cardBackground,
           shadowOpacity: isLightBg ? 0.15 : 0.25,
         },
       ]}
       activeOpacity={0.9}
     >
-      <Text style={[styles.cardTitle, { color: theme.text }]}>⭐ נקודות דיגיטליות</Text>
+      <Text style={[styles.cardTitle, { color: cardTextColor }]}>⭐ נקודות דיגיטליות</Text>
       <Text style={[styles.points, { color: theme.primary }]}>{points.toLocaleString()}</Text>
       <Text style={[styles.growth, { color: "#12B886" }]}>{growthLabel}</Text>
 
@@ -54,15 +58,15 @@ const PointsCardComponent = ({
         </LinearGradient>
 
         <View style={styles.progressBarWrapper}>
-          <View style={[styles.progressBar, { backgroundColor: isLightBg ? "#eee" : "#2a2d31" }]}>
+          <View style={[styles.progressBar, { backgroundColor: progressTrackColor }]}>
             <View style={[styles.progressFill, { width: `${progress * 100}%`, backgroundColor: current.colorTo }]} />
           </View>
           {next ? (
-            <Text style={[styles.progressText, { color: theme.text }]}>
+            <Text style={[styles.progressText, { color: cardTextColor }]}>
               עוד {toNext.toLocaleString()} נקודות לדרגת {next.name}
             </Text>
           ) : (
-            <Text style={[styles.progressText, { color: theme.text }]}>הגעת לדרגת {current.name} 🎉</Text>
+            <Text style={[styles.progressText, { color: cardTextColor }]}>הגעת לדרגת {current.name} 🎉</Text>
           )}
         </View>
 
